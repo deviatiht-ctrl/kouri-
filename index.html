@@ -7,9 +7,9 @@
   <title>KOURI + — Transpò rapid, fyab e an sekirite nan Ayiti</title>
   
   <!-- Favicon & PWA -->
-  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/assets/img/icon-placeholder.svg">
+  <link rel="icon" type="image/svg+xml" href="./assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./assets/img/icon-placeholder.svg">
 
   <!-- Google Fonts CDN: Plus Jakarta Sans (Headings & UI) + Inter (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,11 +21,11 @@
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <!-- Core CSS -->
-  <link rel="stylesheet" href="/assets/css/variables.css">
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/navbar.css">
-  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
-  <link rel="stylesheet" href="/assets/css/map.css">
+  <link rel="stylesheet" href="./assets/css/variables.css">
+  <link rel="stylesheet" href="./assets/css/main.css">
+  <link rel="stylesheet" href="./assets/css/navbar.css">
+  <link rel="stylesheet" href="./assets/css/mobile-nav.css">
+  <link rel="stylesheet" href="./assets/css/map.css">
 
   <!-- Vendor CDN Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -141,7 +141,7 @@
             <div id="hero-map">
               <!-- Watermark Logo -->
               <div class="map-watermark" data-kouri-logo data-logo-height="20">
-                <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:20px;">
+                <img src="./assets/img/logo-placeholder.svg" alt="KOURI +" style="height:20px;">
               </div>
             </div>
 
@@ -331,7 +331,7 @@
     <div class="container">
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
         <div data-kouri-logo data-logo-height="28">
-          <img src="/assets/img/logo-placeholder.svg" alt="KOURI +" style="height:28px;">
+          <img src="./assets/img/logo-placeholder.svg" alt="KOURI +" style="height:28px;">
         </div>
         <div style="display: flex; gap: 20px; font-size: 0.85rem;">
           <a href="/terms.html" style="color:var(--text-muted);">Kondisyon Itilizasyon</a>
@@ -349,21 +349,21 @@
   <div id="kouri-mobile-nav"></div>
 
   <!-- Scripts -->
-  <script src="/assets/js/supabase.js"></script>
-  <script src="/assets/js/i18n.js"></script>
-  <script src="/assets/js/components/toast.js"></script>
-  <script src="/assets/js/components/logo.js"></script>
-  <script src="/assets/js/auth.js"></script>
-  <script src="/assets/js/navbar.js"></script>
-  <script src="/assets/js/offline/db.js"></script>
-  <script src="/assets/js/offline/outbox.js"></script>
-  <script src="/assets/js/offline/sync.js"></script>
+  <script src="./assets/js/supabase.js"></script>
+  <script src="./assets/js/i18n.js"></script>
+  <script src="./assets/js/components/toast.js"></script>
+  <script src="./assets/js/components/logo.js"></script>
+  <script src="./assets/js/auth.js"></script>
+  <script src="./assets/js/navbar.js"></script>
+  <script src="./assets/js/offline/db.js"></script>
+  <script src="./assets/js/offline/outbox.js"></script>
+  <script src="./assets/js/offline/sync.js"></script>
 
   <!-- Hero Map Controller Module -->
   <script type="module">
-    import { KouriMap } from '/assets/js/map/map.js';
-    import { routingService } from '/assets/js/map/routing.js';
-    import { geocodingService } from '/assets/js/map/geocoding.js';
+    import { KouriMap } from './assets/js/map/map.js';
+    import { routingService } from './assets/js/map/routing.js';
+    import { geocodingService } from './assets/js/map/geocoding.js';
 
     let selectedCategory = 'standard';
     let baseRate = 350;
