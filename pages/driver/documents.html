@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Dokiman Mwen — KOURI Chofè</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <div style="margin-bottom: 24px;">
+        <div class="badge badge-primary" style="margin-bottom: 8px;">Verifikasyon Legal</div>
+        <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Dokiman Chofè ak Machin</h1>
+        <p>Telechaje dokiman obligatwa yo pou w ka resevwa kous ak abònman san enteripsyon.</p>
+      </div>
+
+      <!-- Overall Driver Status Banner -->
+      <div class="card" style="padding:16px; margin-bottom:24px; background:var(--success-subtle); border-color:rgba(5,150,105,0.25); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <i data-lucide="check-circle" style="width:24px; height:24px; color:var(--success);"></i>
+          <div>
+            <div style="font-weight:700; color:var(--success);">Kont Chofè Apwouve</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Tout dokiman prensipal ou yo valide pa administrasyon an.</div>
+          </div>
+        </div>
+        <span class="badge badge-success">Apwouve</span>
+      </div>
+
+      <!-- Documents Upload List -->
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        
+        <!-- Document 1: Permis de Conduire -->
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <i data-lucide="file-check" style="width:20px; height:20px; color:var(--success);"></i>
+              <div>
+                <div style="font-weight:700;">Pèmi Kondwi Valab</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Ekspire: 12 Janvye 2028</div>
+              </div>
+            </div>
+            <span class="badge badge-success">Apwouve</span>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+            Kòmantè Admin: Pèmi klè, kategori B konfòm.
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="#" style="font-size:0.8rem; color:var(--accent);">Wè fichye telechaje a</a>
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+              <i data-lucide="upload"></i> Mete ajou
+              <input type="file" style="display:none;" onchange="showToast('success', 'Fichye Voye', 'Nouvo fichye a ap tann verifikasyon.')">
+            </label>
+          </div>
+        </div>
+
+        <!-- Document 2: National ID (CIN / NIF) -->
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <i data-lucide="id-card" style="width:20px; height:20px; color:var(--success);"></i>
+              <div>
+                <div style="font-weight:700;">Kat Idantifikasyon Nasyonal (CIN)</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">ONI Haïti #01-99-99-1990-05-00123</div>
+              </div>
+            </div>
+            <span class="badge badge-success">Apwouve</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="#" style="font-size:0.8rem; color:var(--accent);">Wè fichye telechaje a</a>
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+              <i data-lucide="upload"></i> Mete ajou
+              <input type="file" style="display:none;" onchange="showToast('success', 'Fichye Voye', 'Fichye anrejistre.')">
+            </label>
+          </div>
+        </div>
+
+        <!-- Document 3: Enregistrement Véhicule / Carte Rose -->
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <i data-lucide="file-text" style="width:20px; height:20px; color:var(--success);"></i>
+              <div>
+                <div style="font-weight:700;">Anrejistreman Machin (Kat Woz)</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Toyota Corolla 2018 • Plak AA-12345</div>
+              </div>
+            </div>
+            <span class="badge badge-success">Apwouve</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="#" style="font-size:0.8rem; color:var(--accent);">Wè fichye telechaje a</a>
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+              <i data-lucide="upload"></i> Mete ajou
+              <input type="file" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Document 4: Police d'Assurance (OAVCT) -->
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <i data-lucide="shield" style="width:20px; height:20px; color:var(--warning);"></i>
+              <div>
+                <div style="font-weight:700;">Asirans Machin (OAVCT)</div>
+                <div style="font-size:0.75rem; color:var(--warning);">Ekspire nan 18 jou (2 Des 2026)</div>
+              </div>
+            </div>
+            <span class="badge badge-warning">Prèske Ekspire</span>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+            Kòmantè Admin: Tanpri telechaje nouvo polis la avan dat limit la pou evite sispansyon kont lan.
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="#" style="font-size:0.8rem; color:var(--accent);">Wè fichye aktyèl la</a>
+            <label class="btn btn-accent btn-sm" style="cursor:pointer;">
+              <i data-lucide="upload"></i> Telechaje Nouvo Asirans
+              <input type="file" style="display:none;" onchange="showToast('success', 'Nouvo Asirans Voye', 'Ekip admin an ap verifye nouvo polis la.')">
+            </label>
+          </div>
+        </div>
+
+        <!-- Document 5: Photos du Véhicule -->
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <i data-lucide="camera" style="width:20px; height:20px; color:var(--success);"></i>
+              <div>
+                <div style="font-weight:700;">Foto Machin nan (Devan, Dèyè, Enteryè)</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">4 foto telechaje</div>
+              </div>
+            </div>
+            <span class="badge badge-success">Apwouve</span>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom:12px;">
+            <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=140" style="width:100%; height:64px; object-fit:cover; border-radius:var(--radius-sm);" alt="Machin 1">
+            <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=140" style="width:100%; height:64px; object-fit:cover; border-radius:var(--radius-sm);" alt="Machin 2">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=140" style="width:100%; height:64px; object-fit:cover; border-radius:var(--radius-sm);" alt="Machin 3">
+            <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=140" style="width:100%; height:64px; object-fit:cover; border-radius:var(--radius-sm);" alt="Machin 4">
+          </div>
+          <label class="btn btn-outline btn-sm btn-block" style="cursor:pointer;">
+            <i data-lucide="plus"></i> Ajoute oswa Ranplase Foto
+            <input type="file" multiple style="display:none;" onchange="showToast('info', 'Foto Chaje', 'Foto yo anrejistre.')">
+          </label>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+</body>
+</html>

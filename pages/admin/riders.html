@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Jesyon Pasaje yo">
+  <title>Pasaje yo — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; margin-bottom:4px;">Itilizatè Pasaje yo</h2>
+            <p style="font-size:0.875rem;">Jere kont pasaje yo, ajiste balans bous yo, oswa bloke kont.</p>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pasaje</th>
+                <th>Telefòn</th>
+                <th>Balans Bous</th>
+                <th>Abònman</th>
+                <th>Kous Fèt</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Pasaje">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80" style="width:36px; height:36px; border-radius:50%; object-fit:cover;" alt="Avatar">
+                    <div>
+                      <div style="font-weight:700;">Jean-Baptiste Delva</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">pasaje@kouri.ht</div>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Telefòn">+509 3712-3456</td>
+                <td data-label="Balans"><strong data-money-htg="3450">3,450 HTG</strong></td>
+                <td data-label="Abònman"><span class="badge badge-success">Wout Travay</span></td>
+                <td data-label="Kous">24</td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="prompt('Nouvo balans pou Jean-Baptiste:') && showToast('success', 'Bous Ajiste', 'Balans bous la mete ajou.')">
+                      Ajiste Bous
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="confirm('Bloke pasaje sa a?') && showToast('warning', 'Bloke', 'Kont la bloke tanporèman.')">
+                      Bloke
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td data-label="Pasaje">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80" style="width:36px; height:36px; border-radius:50%; object-fit:cover;" alt="Avatar">
+                    <div>
+                      <div style="font-weight:700;">Valérie Lamothe</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">valerie@gmail.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Telefòn">+509 3800-1122</td>
+                <td data-label="Balans"><strong data-money-htg="850">850 HTG</strong></td>
+                <td data-label="Abònman"><span class="badge badge-primary">Pake Lekòl</span></td>
+                <td data-label="Kous">16</td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="showToast('info', 'Bous', 'Ajisteman bous.')">Ajiste Bous</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0F1A">
+  <title>Bous Mwen — KOURI</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh; display:flex; flex-direction:column;">
+
+  <!-- Header -->
+  <header style="border-bottom:1px solid var(--border); padding:16px 0; background:#FFFFFF; position:sticky; top:0; z-index:20;">
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <a href="/pages/rider/home.html" class="btn btn-ghost btn-sm" style="width:38px; height:38px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--border);" title="Retounen">
+          <i data-lucide="arrow-left" style="width:18px; height:18px;"></i>
+        </a>
+        <div data-kouri-logo data-logo-height="24">
+          <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:24px;">
+        </div>
+      </div>
+      <div>
+        <a href="/pages/account/profile.html" class="btn btn-ghost btn-sm" style="width:36px; height:36px; padding:0; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
+          <i data-lucide="user" style="width:16px; height:16px;"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Wallet Content -->
+  <main style="flex:1; padding:32px 0 60px 0;">
+    <div class="container" style="max-width:680px;">
+      
+      <!-- Nav Tabs -->
+      <div style="display:flex; gap:8px; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:28px; overflow-x:auto;">
+        <a href="/pages/account/profile.html" class="btn btn-ghost btn-sm btn-pill">
+          <i data-lucide="user" style="width:15px; height:15px;"></i> Pwofil
+        </a>
+        <a href="/pages/account/wallet.html" class="btn btn-sm btn-pill" style="background:var(--ink); color:#FFF;">
+          <i data-lucide="wallet" style="width:15px; height:15px;"></i> Bous
+        </a>
+        <a href="/pages/account/trips.html" class="btn btn-ghost btn-sm btn-pill">
+          <i data-lucide="clock" style="width:15px; height:15px;"></i> Kous Mwen
+        </a>
+        <a href="/pages/account/settings.html" class="btn btn-ghost btn-sm btn-pill">
+          <i data-lucide="settings" style="width:15px; height:15px;"></i> Paramèt
+        </a>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <h1 style="font-size:1.8rem; margin-bottom:6px;">Bous KOURI</h1>
+        <p style="color:var(--text-muted); font-size:0.95rem;">Jere balans ou pou peye kous san traka kach.</p>
+      </div>
+
+      <!-- Balance Card -->
+      <div class="card" style="padding:28px; background:var(--ink); color:#FFFFFF; border-radius:var(--radius-xl); margin-bottom:24px; position:relative; overflow:hidden;">
+        <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; opacity:0.8; margin-bottom:8px;">Balans Disponib</div>
+        <div style="font-size:2.4rem; font-weight:800; font-family:var(--font-heading); margin-bottom:8px;" id="wallet-balance-htg">
+          1,250.00 HTG
+        </div>
+        <div style="font-size:0.9rem; opacity:0.75; margin-bottom:24px;" id="wallet-balance-usd">
+          ≈ $9.45 USD (To: 132.25)
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" id="btn-open-topup" class="btn btn-primary btn-pill" style="background:#FFFFFF; color:var(--ink);">
+            <i data-lucide="plus-circle" style="width:16px; height:16px; color:var(--accent);"></i>
+            <span>Rechaje Bous la</span>
+          </button>
+          <a href="/pages/rider/home.html" class="btn btn-outline btn-pill" style="border-color:rgba(255,255,255,0.3); color:#FFFFFF;">
+            <i data-lucide="car"></i>
+            <span>Kòmande Kous</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Top-up Methods Modal/Card -->
+      <div id="topup-card" class="card" style="display:none; padding:24px; margin-bottom:24px; border:1.5px solid var(--accent);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="font-size:1.15rem;">Chwazi Mwayen Rechaj</h3>
+          <button type="button" id="btn-close-topup" class="btn btn-ghost btn-sm" style="padding:4px;"><i data-lucide="x"></i></button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+          <button type="button" class="btn btn-outline btn-lg topup-method-btn" data-method="moncash" style="justify-content:flex-start; padding:12px;">
+            <div style="font-weight:700; color:#DC2626;">MonCash</div>
+          </button>
+          <button type="button" class="btn btn-outline btn-lg topup-method-btn" data-method="natcash" style="justify-content:flex-start; padding:12px;">
+            <div style="font-weight:700; color:#2563EB;">NatCash</div>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="topup-amount">Kantite Lajan (HTG)</label>
+          <input type="number" id="topup-amount" class="form-input" placeholder="500" value="500" min="100" max="50000">
+        </div>
+
+        <button type="button" id="btn-confirm-topup" class="btn btn-primary btn-block btn-lg">
+          <i data-lucide="arrow-right"></i>
+          <span>Konfime Rechaj la</span>
+        </button>
+      </div>
+
+      <!-- Transactions History -->
+      <div class="card" style="padding:24px;">
+        <h3 style="font-size:1.15rem; margin-bottom:16px;">Dènye Tranzaksyon yo</h3>
+        <div id="transactions-list">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--success-subtle); color:var(--success); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="arrow-down-left" style="width:18px; height:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Rechaj MonCash</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">14 Nov 2026 • 2:15 PM</div>
+              </div>
+            </div>
+            <div style="font-weight:800; color:var(--success);">+1,000 HTG</div>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--surface-alt); color:var(--ink); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="car" style="width:18px; height:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Pèman Kous — Ayewopò</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">14 Nov 2026 • 11:30 AM</div>
+              </div>
+            </div>
+            <div style="font-weight:800; color:var(--ink);">-650 HTG</div>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--success-subtle); color:var(--success); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="gift" style="width:18px; height:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Bonis Byenveni</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">12 Nov 2026</div>
+              </div>
+            </div>
+            <div style="font-weight:800; color:var(--success);">+900 HTG</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+
+      const topupCard = document.getElementById('topup-card');
+      document.getElementById('btn-open-topup')?.addEventListener('click', () => {
+        topupCard.style.display = 'block';
+        topupCard.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      document.getElementById('btn-close-topup')?.addEventListener('click', () => {
+        topupCard.style.display = 'none';
+      });
+
+      document.getElementById('btn-confirm-topup')?.addEventListener('click', () => {
+        const amount = document.getElementById('topup-amount').value || 500;
+        showToast('success', 'Rechaj Reyisi!', `Ou rechaje bous ou a ${amount} HTG avèk siksè.`);
+        topupCard.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>

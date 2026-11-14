@@ -1,0 +1,94 @@
+/* ======================================================================
+   KOURI — Mobile Bottom Navigation Bar (mobile-nav.css)
+   Fixed bottom bar: border-radius 24px 24px 0 0, rgba(255,255,255,0.90),
+   blur 20px, 4-5 tabs with Lucide icon + 10px label, safe-area-inset padding.
+   ====================================================================== */
+
+.mobile-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-bottom-nav);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 24px rgba(11, 15, 26, 0.06);
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 12px)) 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  transition: transform var(--transition-normal);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  min-height: 48px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.mobile-nav-item i, .mobile-nav-item svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.mobile-nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  line-height: 1;
+}
+
+.mobile-nav-item:hover, .mobile-nav-item.active {
+  color: var(--ink);
+}
+
+.mobile-nav-item.active i, .mobile-nav-item.active svg {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.mobile-nav-item.active .mobile-nav-label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Badge count for notifications/messages */
+.mobile-nav-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 16px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background-color: var(--danger);
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+}
+
+/* On desktop, hide mobile bottom bar unless explicitly forced */
+@media (min-width: 769px) {
+  .mobile-bottom-bar {
+    display: none !important;
+  }
+}

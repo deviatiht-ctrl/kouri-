@@ -1,0 +1,80 @@
+/* ======================================================================
+   KOURI — CSS Design Tokens & Theme Variables
+   Rule: All colors, typography and theme tokens live in this file only.
+   Background is ALWAYS white #FFFFFF.
+   ====================================================================== */
+
+:root {
+  /* Core Brand Colors (Overridable via Admin Branding Settings) */
+  --ink: #0B0F1A;
+  --primary: #0B0F1A;
+  --primary-hover: #1E293B;
+  --primary-contrast: #FFFFFF;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-subtle: #EFF6FF;
+  --accent-contrast: #FFFFFF;
+
+  /* Functional Alert & Status Colors */
+  --success: #059669;
+  --success-hover: #047857;
+  --success-subtle: #ECFDF5;
+  --danger: #DC2626;
+  --danger-hover: #B91C1C;
+  --danger-subtle: #FEF2F2;
+  --warning: #D97706;
+  --warning-subtle: #FFFBEB;
+
+  /* Neutral Surface, Border & Text Tokens */
+  --page-bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-alt: #F8FAFC;
+  --surface-hover: #F1F5F9;
+  --border: #E2E8F0;
+  --border-subtle: #F1F5F9;
+  --border-focus: #2563EB;
+  
+  --text-main: #0B0F1A;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  --text-inverse: #FFFFFF;
+
+  /* Typography */
+  --font-body: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Shadows (Ultra-soft, modern elevation) */
+  --shadow-xs: 0 1px 2px rgba(11, 15, 26, 0.04);
+  --shadow-sm: 0 2px 8px -2px rgba(11, 15, 26, 0.06), 0 1px 4px -1px rgba(11, 15, 26, 0.04);
+  --shadow-md: 0 8px 24px -4px rgba(11, 15, 26, 0.08), 0 4px 12px -2px rgba(11, 15, 26, 0.03);
+  --shadow-lg: 0 20px 40px -8px rgba(11, 15, 26, 0.12), 0 8px 16px -4px rgba(11, 15, 26, 0.04);
+  --shadow-float: 0 24px 48px -12px rgba(11, 15, 26, 0.16);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: blur(20px) saturate(180%);
+
+  /* Z-Index Hierarchy */
+  --z-map: 1;
+  --z-map-controls: 10;
+  --z-sheet: 20;
+  --z-bottom-nav: 30;
+  --z-header: 40;
+  --z-drawer: 50;
+  --z-modal: 60;
+  --z-toast: 100;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}

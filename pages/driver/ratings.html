@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Nòt ak Evalyasyon — KOURI Chofè</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <div style="margin-bottom: 24px;">
+        <div class="badge badge-accent" style="margin-bottom: 8px;">Repitasyon</div>
+        <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Evalyasyon Pasaje yo</h1>
+        <p>Kenbe yon bon nòt pou w rete kalifye pou kous Konfò ak abònman VIP.</p>
+      </div>
+
+      <!-- Rating Score Card -->
+      <div class="card" style="padding:28px; margin-bottom:24px; text-align:center;">
+        <div style="font-size:3.5rem; font-weight:800; font-family:var(--font-heading); line-height:1; color:var(--ink); margin-bottom:8px;">
+          4.92
+        </div>
+        <div style="display:flex; justify-content:center; gap:4px; margin-bottom:10px;">
+          <i data-lucide="star" style="width:20px; height:20px; fill:#D97706; color:#D97706;"></i>
+          <i data-lucide="star" style="width:20px; height:20px; fill:#D97706; color:#D97706;"></i>
+          <i data-lucide="star" style="width:20px; height:20px; fill:#D97706; color:#D97706;"></i>
+          <i data-lucide="star" style="width:20px; height:20px; fill:#D97706; color:#D97706;"></i>
+          <i data-lucide="star" style="width:20px; height:20px; fill:#D97706; color:#D97706;"></i>
+        </div>
+        <div style="font-size:0.875rem; color:var(--text-muted);">Baze sou 348 evalyasyon pasaje</div>
+      </div>
+
+      <!-- Reviews list -->
+      <div>
+        <h3 style="font-size:1.2rem; margin-bottom:14px;">Kòmantè Pasaje yo Fèk Kite</h3>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="card" style="padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight:700;">Jean-Baptiste D.</span>
+              <div style="display:flex; gap:2px;">
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+              </div>
+            </div>
+            <p style="font-size:0.875rem;">"Machin nan te pwòp anpil, èkondisyone a t ap mache byen, e chofè a te trè politi. Mwen rekòmande l san ezite!"</p>
+          </div>
+
+          <div class="card" style="padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight:700;">Valérie L.</span>
+              <div style="display:flex; gap:2px;">
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+                <i data-lucide="star" style="width:14px; height:14px; fill:#D97706; color:#D97706;"></i>
+              </div>
+            </div>
+            <p style="font-size:0.875rem;">"Li toujou a lè nan maten pou abònman lekòl la. Mwen santi timoun yo an sekirite total avè l."</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+</body>
+</html>

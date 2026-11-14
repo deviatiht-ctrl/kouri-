@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Bous Mwen — KOURI</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <div style="margin-bottom: 24px;">
+        <div class="badge badge-primary" style="margin-bottom: 8px;">Finans</div>
+        <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);" data-i18n="nav_wallet">Bous KOURI</h1>
+        <p>Peye kous ak abònman ou yo pi rapid san bezwen gen lajan kach nan men.</p>
+      </div>
+
+      <!-- BALANCE CARD -->
+      <div class="card" style="background:var(--ink); color:#FFFFFF; border:none; padding:32px; border-radius:var(--radius-xl); margin-bottom:28px;">
+        <div style="font-size:0.85rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">
+          Balans Disponib
+        </div>
+        <div style="font-size:clamp(2.2rem, 5vw, 3.2rem); font-weight:800; font-family:var(--font-heading); line-height:1; margin-bottom:24px;" data-money-htg="3450">
+          3,450 HTG
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button type="button" id="btn-open-topup" class="btn btn-accent btn-md btn-pill">
+            <i data-lucide="plus-circle"></i>
+            <span data-i18n="btn_top_up">Rechaje Bous</span>
+          </button>
+          <button type="button" class="btn btn-outline btn-md btn-pill" style="border-color:rgba(255,255,255,0.25); color:#FFFFFF;" onclick="showToast('info', 'MonCash / NatCash', 'Ou ka peye dirèkteman tou pandan kous la.')">
+            <i data-lucide="smartphone"></i> Peman Mobil
+          </button>
+        </div>
+      </div>
+
+      <!-- TOP UP FORM MODAL / COLLAPSIBLE -->
+      <div id="topup-box" class="card" style="display:none; margin-bottom:28px; border:2px solid var(--accent);">
+        <div class="card-header">
+          <h3 style="font-size:1.2rem;">Rechaje pa MonCash oswa NatCash</h3>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-close-topup"><i data-lucide="x"></i></button>
+        </div>
+        <p style="font-size:0.875rem; margin-bottom:16px;" data-i18n="top_up_instructions">
+          Voye montan an sou kont ofisyèl KOURI an epi telechaje prèv tranzaksyon an (resi oswa capture ekran).
+        </p>
+
+        <div style="background:var(--surface-alt); padding:12px; border-radius:var(--radius-md); font-size:0.85rem; margin-bottom:16px;">
+          <div><strong>MonCash KOURI:</strong> +509 3700-1122 (KOURI SA)</div>
+          <div style="margin-top:4px;"><strong>NatCash KOURI:</strong> +509 4800-1122 (KOURI SA)</div>
+        </div>
+
+        <form id="form-proof-upload">
+          <div class="form-group">
+            <label class="form-label">Sèvis Peman</label>
+            <select class="form-select" id="topup-provider">
+              <option value="moncash">MonCash</option>
+              <option value="natcash">NatCash</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Montan (HTG)</label>
+            <input type="number" class="form-input" id="topup-amount" placeholder="Eg: 1000" min="100" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Kòd Tranzaksyon (ID SMS)</label>
+            <input type="text" class="form-input" id="topup-tx-code" placeholder="Eg: MC893240291" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Foto Resi oswa Prèv</label>
+            <input type="file" class="form-input" id="topup-file" accept="image/*" required>
+          </div>
+
+          <button type="submit" id="btn-submit-proof" class="btn btn-primary btn-block btn-lg">
+            <i data-lucide="upload"></i> Voye Prèv pou Validasyon
+          </button>
+        </form>
+      </div>
+
+      <!-- TRANSACTIONS HISTORY -->
+      <div>
+        <h2 style="font-size:1.3rem; margin-bottom:16px;" data-i18n="transaction_history">Istorik Tranzaksyon yo</h2>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="card" style="padding:14px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--success-subtle); color:var(--success); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="arrow-down-left" style="width:18px; height:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Rechaj MonCash</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">13 Novanm 2026 • Validé</div>
+              </div>
+            </div>
+            <div style="font-weight:800; color:var(--success);" data-money-htg="2500">+2,500 HTG</div>
+          </div>
+
+          <div class="card" style="padding:14px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--surface-alt); color:var(--ink); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="arrow-up-right" style="width:18px; height:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Peman Kous KOURI Klasik</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">14 Novanm 2026 • #trip_1234</div>
+              </div>
+            </div>
+            <div style="font-weight:800; color:var(--ink);" data-money-htg="650">-650 HTG</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+
+  <script>
+    const topupBox = document.getElementById('topup-box');
+    document.getElementById('btn-open-topup')?.addEventListener('click', () => {
+      topupBox.style.display = 'block';
+      topupBox.scrollIntoView({ behavior: 'smooth' });
+    });
+    document.getElementById('btn-close-topup')?.addEventListener('click', () => {
+      topupBox.style.display = 'none';
+    });
+
+    document.getElementById('form-proof-upload')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-proof');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="skeleton-text" style="width:100px; height:18px;"></span>`;
+
+      setTimeout(() => {
+        showToast('success', 'Prèv Voye!', 'Administrasyon KOURI ap verifye tranzaksyon an nan mwens pase 10 minit.');
+        topupBox.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="upload"></i> Voye Prèv pou Validasyon`;
+        if (window.lucide) window.lucide.createIcons();
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

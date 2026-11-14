@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0F1A">
+  <title>KOURI — Kòmande yon kous</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <!-- Leaflet CDN (100% Free, Zero API Keys, Universal Device Support) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Vendor Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+  <link rel="stylesheet" href="/assets/css/map.css">
+  <link rel="stylesheet" href="/assets/css/bottom-sheet.css">
+
+  <style>
+    /* In full-screen Rider App, hide the floating website navbar so it does not collide with the sidebar */
+    .navbar-desktop-wrapper {
+      display: none !important;
+    }
+    /* Pulse Radar Animation for Searching State */
+    .radar-pulse {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.15);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 0 auto 16px auto;
+    }
+    .radar-ring {
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 2px solid rgba(37, 99, 235, 0.35);
+      animation: radar-expand 1.8s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    @keyframes radar-expand {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .place-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+    .place-item:hover {
+      background: var(--surface-alt);
+    }
+    .category-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      margin-bottom: 8px;
+    }
+    .category-card:hover {
+      border-color: var(--ink);
+    }
+    .category-card.selected {
+      border-color: var(--ink);
+      background-color: var(--surface-alt);
+    }
+  </style>
+</head>
+<body style="overflow:hidden;">
+
+  <div id="kouri-navbar"></div>
+
+  <div class="ride-app-container">
+    <!-- Map Canvas (Full screen mobile, offset on desktop) -->
+    <div id="map">
+      <!-- Watermark Logo -->
+      <div class="map-watermark" data-kouri-logo data-logo-height="20">
+        <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:20px;">
+      </div>
+    </div>
+
+    <!-- Draggable Bottom Sheet (Mobile) / Left Side Panel (Desktop) -->
+    <div class="bottom-sheet snap-half" id="rider-sheet">
+      <div class="sheet-handle-wrapper">
+        <div class="sheet-handle-bar"></div>
+      </div>
+
+      <div class="sheet-content" id="sheet-content">
+
+        <!-- App Brand Header (Desktop and Mobile) with Wallet, Trips, and Menu -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+          <a href="/index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink);">
+            <div data-kouri-logo data-logo-height="26">
+              <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:26px;">
+            </div>
+          </a>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <!-- Bous Mwen Button -->
+            <a href="/pages/account/wallet.html" class="btn btn-outline btn-sm btn-pill" title="Bous Mwen" style="padding: 6px 12px; font-size: 0.8rem; font-weight: 700;">
+              <i data-lucide="wallet" style="width:14px; height:14px; color:var(--accent);"></i>
+              <span id="rider-header-bal">1,250 G</span>
+            </a>
+
+            <!-- Kous Mwen Button -->
+            <a href="/pages/account/trips.html" class="btn btn-ghost btn-sm btn-pill" title="Istwa Kous Mwen" style="padding: 6px 10px; font-size: 0.8rem;">
+              <i data-lucide="clock" style="width:14px; height:14px;"></i>
+              <span class="desktop-only">Kous</span>
+            </a>
+
+            <!-- Full Account & Menu Drawer Trigger -->
+            <button type="button" id="btn-open-user-menu" class="btn btn-ghost btn-sm" style="width:36px; height:36px; padding:0; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Pwofil & Paramèt">
+              <i data-lucide="menu" style="width:16px; height:16px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 1. STEP: LOCATION SELECTION (DEFAULT) -->
+        <div id="step-location" class="step-panel">
+          <div style="margin-bottom: 16px;">
+            <h2 style="font-size: 1.4rem;" data-i18n="where_to">Ki kote ou prale?</h2>
+          </div>
+
+          <!-- Pickup & Destination Inputs with Autocomplete Dropdowns -->
+          <div style="background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius-lg); padding:12px; margin-bottom:16px;">
+            <div class="form-group" style="margin-bottom:8px; position:relative;">
+              <div class="input-with-icon">
+                <i data-lucide="circle-dot" class="input-icon" style="color:var(--ink);"></i>
+                <input type="text" id="input-pickup" class="form-input" placeholder="Kote pou pran w lan" value="Aéroport Toussaint Louverture" autocomplete="off">
+              </div>
+              <div id="pickup-autocomplete-list" class="autocomplete-dropdown" style="display:none;"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:0; position:relative;">
+              <div class="input-with-icon">
+                <i data-lucide="square" class="input-icon" style="color:var(--accent);"></i>
+                <input type="text" id="input-destination" class="form-input" placeholder="Destinasyon ou" value="Place Saint-Pierre, Pétion-Ville" autocomplete="off">
+              </div>
+              <div id="dest-autocomplete-list" class="autocomplete-dropdown" style="display:none;"></div>
+            </div>
+          </div>
+
+          <!-- Saved & Recent Places -->
+          <div style="margin-bottom: 16px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;" data-i18n="saved_places">
+              Kote ou anrejistre
+            </div>
+            <div id="saved-places-list">
+              <div class="place-item" data-lat="18.5144" data-lng="-72.2858" data-name="Place Saint-Pierre, Pétion-Ville">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--surface-alt); display:flex; align-items:center; justify-content:center;">
+                  <i data-lucide="briefcase" style="width:16px; height:16px; color:var(--ink);"></i>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.875rem;">Biwo / Travay</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Rue Pan Américaine, Pétion-Ville</div>
+                </div>
+              </div>
+
+              <div class="place-item" data-lat="18.5796" data-lng="-72.2926" data-name="Aéroport Toussaint Louverture">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--surface-alt); display:flex; align-items:center; justify-content:center;">
+                  <i data-lucide="plane" style="width:16px; height:16px; color:var(--ink);"></i>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:0.875rem;">Aewopò Mais Gâté</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Boulevard Toussaint Louverture</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-show-categories" class="btn btn-primary btn-block btn-lg">
+            <span>Kontinye nan Chwa Machin</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- 2. STEP: CATEGORY & PAYMENT SELECTION -->
+        <div id="step-categories" class="step-panel" style="display:none;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <button type="button" id="btn-back-to-location" class="btn btn-ghost btn-sm" style="padding:0;">
+              <i data-lucide="arrow-left"></i> Retounen
+            </button>
+            <div id="trip-metrics-badge" class="badge badge-accent">
+              <span id="trip-distance-val">8.4 km</span> • <span id="trip-duration-val">22 min</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <h3 style="font-size:1.15rem;" data-i18n="choose_vehicle">Chwazi kategori machin</h3>
+          </div>
+
+          <!-- Vehicle Categories List -->
+          <div id="categories-list">
+            <div class="category-card" data-cat="moto" data-base="150" data-perkm="35">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <i data-lucide="bike" style="width:26px; height:26px; color:var(--ink);"></i>
+                <div>
+                  <div style="font-weight:700; font-size:0.95rem;">Kouri Moto</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">ETA 4 min • 1 pasaje</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="cat-price" style="font-weight:800; font-size:1.05rem;" data-money-htg="350">350 HTG</div>
+              </div>
+            </div>
+
+            <div class="category-card selected" data-cat="standard" data-base="250" data-perkm="65">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <i data-lucide="car" style="width:26px; height:26px; color:var(--accent);"></i>
+                <div>
+                  <div style="font-weight:700; font-size:0.95rem;">Kouri Klasik</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">ETA 6 min • 4 plas</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="cat-price" style="font-weight:800; font-size:1.05rem;" data-money-htg="650">650 HTG</div>
+                <div class="badge badge-primary" style="font-size:9px; padding:1px 6px;">Fiks Zòn</div>
+              </div>
+            </div>
+
+            <div class="category-card" data-cat="comfort" data-base="450" data-perkm="95">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <i data-lucide="sparkles" style="width:26px; height:26px; color:var(--ink);"></i>
+                <div>
+                  <div style="font-weight:700; font-size:0.95rem;">Kouri Konfò</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">ETA 8 min • SUV VIP</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="cat-price" style="font-weight:800; font-size:1.05rem;" data-money-htg="1100">1,100 HTG</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subscription Badge Notification if active -->
+          <div id="sub-active-banner" style="display:flex; align-items:center; gap:8px; padding:10px; background:var(--success-subtle); border-radius:var(--radius-md); border:1px solid rgba(5,150,105,0.2); margin:14px 0;">
+            <i data-lucide="check-circle" style="width:18px; height:18px; color:var(--success);"></i>
+            <div style="font-size:0.8rem; font-weight:600; color:var(--success);" data-i18n="subscription_applied">
+              Abònman w ap aplike (0 HTG kous sa)
+            </div>
+          </div>
+
+          <!-- Payment Method Selector -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <i data-lucide="wallet" style="width:18px; height:18px; color:var(--ink);"></i>
+              <span id="selected-payment-label" style="font-weight:600; font-size:0.875rem;">Lajan Kach (Goud)</span>
+            </div>
+            <select id="select-payment-method" class="form-select" style="min-height:36px; padding:4px 8px; width:auto; font-size:0.85rem;">
+              <option value="cash">Kach (Lajan kach)</option>
+              <option value="wallet">Bous KOURI</option>
+              <option value="moncash">MonCash</option>
+              <option value="natcash">NatCash</option>
+            </select>
+          </div>
+
+          <button type="button" id="btn-request-ride" class="btn btn-primary btn-block btn-lg">
+            <span data-i18n="btn_request_kouri">Kòmande KOURI kounye a</span>
+          </button>
+        </div>
+
+        <!-- 3. STEP: SEARCHING DISPATCH (PULSING RADAR) -->
+        <div id="step-searching" class="step-panel" style="display:none; text-align:center; padding: 20px 0;">
+          <div class="radar-pulse">
+            <div class="radar-ring"></div>
+            <i data-lucide="navigation" style="width:32px; height:32px; color:var(--accent);"></i>
+          </div>
+          <h3 style="margin-bottom:6px;" data-i18n="searching_driver">N ap chèche yon chofè ki toupre w...</h3>
+          <p style="font-size:0.875rem; margin-bottom:20px;">Nou kontakte chofè ki pi pre a nan kategori Klasik la.</p>
+          <button type="button" id="btn-cancel-search" class="btn btn-outline btn-sm btn-pill">
+            <i data-lucide="x"></i> Anile demann lan
+          </button>
+        </div>
+
+        <!-- 4. STEP: DRIVER ASSIGNED & ARRIVING -->
+        <div id="step-assigned" class="step-panel" style="display:none;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div class="badge badge-success">
+              <i data-lucide="check"></i> <span id="trip-status-text">Chofè a ap vini</span>
+            </div>
+            <div style="font-weight:800; font-size:1.15rem; color:var(--ink);" id="driver-eta-label">3 min</div>
+          </div>
+
+          <!-- Driver Info Card -->
+          <div class="card" style="padding:14px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" id="driver-avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" alt="Chofè">
+                <div>
+                  <div style="font-weight:700; font-size:1rem;" id="driver-name">Mackenzy Pierre</div>
+                  <div style="display:flex; align-items:center; gap:4px; font-size:0.8rem; color:var(--text-muted);">
+                    <i data-lucide="star" style="width:13px; height:13px; fill:#D97706; color:#D97706;"></i>
+                    <span id="driver-rating">4.92</span> • <span>Toyota Corolla (Nwa)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="badge badge-primary" style="font-size:0.8rem;" id="driver-plate">AA-12345</div>
+            </div>
+
+            <!-- Action buttons: Call, Chat, Share, SOS -->
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+              <a href="tel:+50937000000" id="btn-call-driver" class="btn btn-outline btn-sm" title="Rele">
+                <i data-lucide="phone"></i>
+              </a>
+              <button type="button" id="btn-chat-driver" class="btn btn-outline btn-sm" title="Mesaj">
+                <i data-lucide="message-square"></i>
+              </button>
+              <button type="button" id="btn-share-ride" class="btn btn-outline btn-sm" title="Pataje kous la">
+                <i data-lucide="share-2"></i>
+              </button>
+              <button type="button" id="btn-sos-rider" class="btn btn-danger btn-sm" title="SOS Ijans">
+                <i data-lucide="alert-triangle"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Offline Security Code & QR -->
+          <div style="background:var(--surface-alt); border-radius:var(--radius-lg); padding:14px; text-align:center; border:1px solid var(--border);">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px;" data-i18n="trip_code_label">
+              Kòd sekirite pou bay chofè a:
+            </div>
+            <div style="font-size:2rem; font-weight:800; letter-spacing:4px; font-family:var(--font-heading); color:var(--ink);" id="rider-trip-code">
+              582 914
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+              Chofè a pap ka kòmanse kous la san kòd sa a.
+            </div>
+          </div>
+
+          <button type="button" id="btn-start-trip" class="btn btn-primary btn-block btn-lg" style="margin-top:14px;">
+            <i data-lucide="play"></i>
+            <span>Monte nan Machin (Kòmanse Wout la)</span>
+          </button>
+        </div>
+
+        <!-- 5. STEP: TRIP IN PROGRESS -->
+        <div id="step-in-progress" class="step-panel" style="display:none;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div class="badge badge-accent">
+              <i data-lucide="navigation"></i> Kous la ap fèt
+            </div>
+            <div style="font-weight:700; font-size:0.9rem;" id="progress-arrival-time">Rive vè 4:45 PM</div>
+          </div>
+
+          <div class="card" style="padding:14px; margin-bottom:16px;">
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">Destinasyon:</div>
+            <div style="color:var(--text-muted); font-size:0.875rem;" id="progress-dest-text">Place Saint-Pierre, Pétion-Ville</div>
+          </div>
+
+          <!-- SOS Button Full Width -->
+          <button type="button" id="btn-emergency-sos" class="btn btn-danger btn-block btn-lg" style="margin-bottom:10px;">
+            <i data-lucide="alert-octagon"></i>
+            <span data-i18n="sos_button">SOS Ijans</span>
+          </button>
+          <button type="button" id="btn-complete-demo-ride" class="btn btn-outline btn-block btn-sm">
+            <span>[Demo] Simile Finisman Kous la</span>
+          </button>
+        </div>
+
+        <!-- 6. STEP: COMPLETED & RATING -->
+        <div id="step-completed" class="step-panel" style="display:none; text-align:center;">
+          <div style="width:56px; height:56px; border-radius:50%; background:var(--success-subtle); color:var(--success); display:flex; align-items:center; justify-content:center; margin:0 auto 14px auto;">
+            <i data-lucide="check" style="width:28px; height:28px;"></i>
+          </div>
+          <h2 style="font-size:1.5rem; margin-bottom:4px;" data-i18n="trip_completed">Kous la fini!</h2>
+          <div style="font-size:1.5rem; font-weight:800; font-family:var(--font-heading); color:var(--ink); margin-bottom:16px;" id="final-fare-label" data-money-htg="650">
+            650 HTG
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <div style="font-size:0.9rem; font-weight:700; margin-bottom:8px;" data-i18n="rate_trip_title">Ki jan kous la te pase?</div>
+            <div style="display:flex; justify-content:center; gap:8px;" id="star-rating-box">
+              <button type="button" class="btn btn-ghost" style="padding:6px;" data-star="1"><i data-lucide="star" style="width:28px; height:28px; fill:#D97706; color:#D97706;"></i></button>
+              <button type="button" class="btn btn-ghost" style="padding:6px;" data-star="2"><i data-lucide="star" style="width:28px; height:28px; fill:#D97706; color:#D97706;"></i></button>
+              <button type="button" class="btn btn-ghost" style="padding:6px;" data-star="3"><i data-lucide="star" style="width:28px; height:28px; fill:#D97706; color:#D97706;"></i></button>
+              <button type="button" class="btn btn-ghost" style="padding:6px;" data-star="4"><i data-lucide="star" style="width:28px; height:28px; fill:#D97706; color:#D97706;"></i></button>
+              <button type="button" class="btn btn-ghost" style="padding:6px;" data-star="5"><i data-lucide="star" style="width:28px; height:28px; fill:#D97706; color:#D97706;"></i></button>
+            </div>
+          </div>
+
+          <button type="button" id="btn-finish-rating" class="btn btn-primary btn-block btn-lg">
+            <span data-i18n="btn_submit_rating">Voye evalyasyon</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <!-- Slide-out Rider Account & Navigation Drawer -->
+  <div id="rider-account-drawer" style="display:none; position:fixed; inset:0; z-index:200; background:rgba(11, 15, 26, 0.45); backdrop-filter:blur(4px);">
+    <div style="position:absolute; top:0; left:0; bottom:0; width:min(360px, 85vw); background:#FFFFFF; box-shadow:var(--shadow-float); display:flex; flex-direction:column; padding:24px; overflow-y:auto;">
+      
+      <!-- Drawer Top Bar -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div data-kouri-logo data-logo-height="24">
+          <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:24px;">
+        </div>
+        <button type="button" id="btn-close-user-menu" class="btn btn-ghost btn-sm" style="width:32px; height:32px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+          <i data-lucide="x" style="width:18px; height:18px;"></i>
+        </button>
+      </div>
+
+      <!-- User Profile Card -->
+      <a href="/pages/account/profile.html" style="display:flex; align-items:center; gap:14px; padding:14px; background:var(--surface-alt); border-radius:var(--radius-lg); margin-bottom:24px; text-decoration:none; color:var(--ink);">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #FFF;" alt="Avatar">
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:700; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="drawer-user-name">Itilizatè KOURI</div>
+          <div style="font-size:0.8rem; color:var(--text-muted);" id="drawer-user-phone">509 3123-4567</div>
+        </div>
+        <i data-lucide="chevron-right" style="width:16px; height:16px; color:var(--text-muted);"></i>
+      </a>
+
+      <!-- Navigation Links -->
+      <div style="display:flex; flex-direction:column; gap:6px; flex:1;">
+        <a href="/pages/account/wallet.html" class="btn btn-ghost btn-lg" style="justify-content:flex-start; padding:12px 14px; border-radius:var(--radius-md); font-weight:600;">
+          <i data-lucide="wallet" style="color:var(--accent);"></i>
+          <span style="flex:1; text-align:left;">Bous Mwen</span>
+          <span class="badge badge-primary">1,250 G</span>
+        </a>
+
+        <a href="/pages/account/trips.html" class="btn btn-ghost btn-lg" style="justify-content:flex-start; padding:12px 14px; border-radius:var(--radius-md); font-weight:600;">
+          <i data-lucide="clock" style="color:var(--ink);"></i>
+          <span style="flex:1; text-align:left;">Kous Mwen</span>
+        </a>
+
+        <a href="/pages/account/profile.html" class="btn btn-ghost btn-lg" style="justify-content:flex-start; padding:12px 14px; border-radius:var(--radius-md); font-weight:600;">
+          <i data-lucide="user" style="color:var(--ink);"></i>
+          <span style="flex:1; text-align:left;">Pwofil Mwen</span>
+        </a>
+
+        <a href="/pages/account/settings.html" class="btn btn-ghost btn-lg" style="justify-content:flex-start; padding:12px 14px; border-radius:var(--radius-md); font-weight:600;">
+          <i data-lucide="settings" style="color:var(--ink);"></i>
+          <span style="flex:1; text-align:left;">Paramèt</span>
+        </a>
+
+        <a href="https://wa.me/50956164468" target="_blank" class="btn btn-ghost btn-lg" style="justify-content:flex-start; padding:12px 14px; border-radius:var(--radius-md); font-weight:600;">
+          <i data-lucide="help-circle" style="color:var(--success);"></i>
+          <span style="flex:1; text-align:left;">Èd & Sipò WhatsApp</span>
+        </a>
+      </div>
+
+      <!-- Bottom Danger Actions: Logout & Delete Account -->
+      <div style="border-top:1px solid var(--border); padding-top:16px; margin-top:20px; display:flex; flex-direction:column; gap:8px;">
+        <button type="button" id="btn-drawer-logout" class="btn btn-outline btn-block" style="justify-content:center;">
+          <i data-lucide="log-out"></i>
+          <span>Dekonekte</span>
+        </button>
+
+        <button type="button" id="btn-drawer-delete" class="btn btn-danger btn-block" style="justify-content:center; background:rgba(220, 38, 38, 0.08); color:var(--danger); border-color:transparent;">
+          <i data-lucide="trash-2"></i>
+          <span>Suprime Kont Mwen</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal Dialog -->
+  <div id="rider-delete-modal" style="display:none; position:fixed; inset:0; z-index:300; background:rgba(11, 15, 26, 0.65); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:16px;">
+    <div class="card" style="max-width:440px; width:100%; padding:28px; text-align:center; box-shadow:var(--shadow-float); border-radius:var(--radius-xl);">
+      <div style="width:52px; height:52px; border-radius:50%; background:var(--danger-subtle); color:var(--danger); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto;">
+        <i data-lucide="trash-2" style="width:26px; height:26px;"></i>
+      </div>
+      <h3 style="margin-bottom:8px;">Èske w sèten ou vle suprime kont ou?</h3>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:24px;">
+        Tout enfòmasyon pèsonèl ou, balans nan bous ou ak istwa kous ou ap efase nèt nan sistèm nan. Aksyon sa a pa ka defèt.
+      </p>
+
+      <div style="display:flex; gap:12px;">
+        <button type="button" id="btn-cancel-rider-delete" class="btn btn-outline" style="flex:1;">
+          Anile
+        </button>
+        <button type="button" id="btn-confirm-rider-delete" class="btn btn-danger" style="flex:1;">
+          Wi, Suprime Kont Mwen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/components/bottom-sheet.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/offline/db.js"></script>
+  <script src="/assets/js/offline/outbox.js"></script>
+  <script src="/assets/js/offline/sync.js"></script>
+  <script src="/assets/js/whatsapp-client.js"></script>
+
+  <!-- Map System Modules -->
+  <script type="module">
+    import { KouriMap } from '/assets/js/map/map.js';
+    import { routingService } from '/assets/js/map/routing.js';
+    import { geocodingService } from '/assets/js/map/geocoding.js';
+
+    // 1. Initialize Map
+    const kmap = new KouriMap('map', {
+      center: [18.540, -72.300],
+      zoom: 13
+    });
+    window.kouriMap = kmap;
+
+    // 2. Initialize Draggable Bottom Sheet
+    const sheet = new BottomSheet('rider-sheet');
+    window.riderSheet = sheet;
+
+    // Coords [lng, lat]
+    let pickupCoord = [-72.2926, 18.5796]; // Mais Gâté Airport
+    let destCoord = [-72.2858, 18.5144];   // Petion-Ville
+    let currentTripRoute = null;
+
+    // Animation intervals
+    let approachInterval = null;
+    let tripProgressInterval = null;
+
+    // Check if prefilled trip arrived from index.html Hero
+    try {
+      const savedTrip = sessionStorage.getItem('kouri_hero_trip');
+      if (savedTrip) {
+        const trip = JSON.parse(savedTrip);
+        if (trip.pickup) document.getElementById('input-pickup').value = trip.pickup;
+        if (trip.destination) document.getElementById('input-destination').value = trip.destination;
+        if (trip.pickupCoord) pickupCoord = trip.pickupCoord;
+        if (trip.destCoord) destCoord = trip.destCoord;
+      }
+    } catch(e) {}
+
+    // Core function: Recalculate route and redraw map
+    async function updateRouteAndMap() {
+      kmap.setPickupPoint(pickupCoord[1], pickupCoord[0]);
+      kmap.setDestinationPoint(destCoord[1], destCoord[0]);
+
+      try {
+        const route = await routingService.getRoute(pickupCoord, destCoord);
+        if (route && route.success) {
+          currentTripRoute = route;
+          routingService.renderRouteOnMap(kmap.map, route.routeGeoJSON);
+          kmap.fitBounds(pickupCoord, destCoord);
+
+          // Update metrics in category step
+          const distEl = document.getElementById('trip-distance-val');
+          const durEl = document.getElementById('trip-duration-val');
+          if (distEl) distEl.textContent = `${route.distanceKm} km`;
+          if (durEl) durEl.textContent = `${route.durationMin} min`;
+
+          // Update category prices dynamically
+          updateCategoryPrices(route.distanceKm);
+
+          // Update destination text in in-progress card
+          const destTextEl = document.getElementById('progress-dest-text');
+          const destInput = document.getElementById('input-destination');
+          if (destTextEl && destInput) destTextEl.textContent = destInput.value;
+        }
+      } catch (err) {
+        console.warn('Route update notice:', err);
+      }
+    }
+
+    function updateCategoryPrices(distanceKm) {
+      document.querySelectorAll('.category-card').forEach(card => {
+        const cat = card.getAttribute('data-cat');
+        let fare = 350;
+        if (cat === 'moto') fare = Math.max(150, Math.round(100 + (distanceKm * 25)));
+        else if (cat === 'comfort') fare = Math.max(600, Math.round(350 + (distanceKm * 65)));
+        else fare = Math.max(350, Math.round(200 + (distanceKm * 40)));
+
+        const priceEl = card.querySelector('.cat-price');
+        if (priceEl) {
+          priceEl.textContent = `${fare.toLocaleString()} HTG`;
+          priceEl.setAttribute('data-money-htg', fare);
+        }
+      });
+    }
+
+    kmap.onReady(async () => {
+      await updateRouteAndMap();
+    });
+
+    // Step switching logic
+    function showStep(stepId, snap = 'half') {
+      document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+      const target = document.getElementById(stepId);
+      if (target) target.style.display = 'block';
+      sheet.snapTo(snap);
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // -------------------------------------------------------------
+    // Place Autocomplete & Input Handling
+    // -------------------------------------------------------------
+    function setupAutocomplete(inputId, dropdownId, isPickup = false) {
+      const input = document.getElementById(inputId);
+      const dropdown = document.getElementById(dropdownId);
+      if (!input || !dropdown) return;
+
+      let debounceTimer = null;
+
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const query = input.value.trim();
+        if (query.length < 2) {
+          dropdown.style.display = 'none';
+          return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+          const results = await geocodingService.search(query);
+          if (results && results.length > 0) {
+            renderDropdown(results);
+          } else {
+            dropdown.style.display = 'none';
+          }
+        }, 220);
+      });
+
+      input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const query = input.value.trim();
+          if (!query) return;
+          const results = await geocodingService.search(query);
+          if (results && results.length > 0) {
+            selectPlace(results[0]);
+          }
+        }
+      });
+
+      function getCategoryIcon(cat) {
+        if (cat === 'restaurant' || cat === 'cafe' || cat === 'bakery') return 'utensils';
+        if (cat === 'school' || cat === 'university') return 'graduation-cap';
+        if (cat === 'hotel') return 'hotel';
+        if (cat === 'hospital') return 'activity';
+        if (cat === 'market' || cat === 'plaza') return 'shopping-bag';
+        if (cat === 'airport') return 'plane';
+        return isPickup ? 'circle-dot' : 'map-pin';
+      }
+
+      function renderDropdown(items) {
+        dropdown.innerHTML = items.map((item, idx) => `
+          <div class="autocomplete-item" data-idx="${idx}">
+            <div class="autocomplete-icon-badge">
+              <i data-lucide="${getCategoryIcon(item.category)}" style="width:16px; height:16px; color:${isPickup ? 'var(--ink)' : 'var(--accent)'};"></i>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.address}</div>
+            </div>
+          </div>
+        `).join('');
+        dropdown.style.display = 'block';
+        if (window.lucide) window.lucide.createIcons({ root: dropdown });
+
+        dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const idx = parseInt(el.getAttribute('data-idx'));
+            selectPlace(items[idx]);
+          });
+        });
+      }
+
+      function selectPlace(item) {
+        input.value = item.name;
+        dropdown.style.display = 'none';
+        if (isPickup) {
+          pickupCoord = [item.lng, item.lat];
+          showToast('success', 'Kote Ranmase', item.name);
+        } else {
+          destCoord = [item.lng, item.lat];
+          showToast('success', 'Destinasyon', item.name);
+        }
+        updateRouteAndMap();
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = 'none';
+        }
+      });
+    }
+
+    setupAutocomplete('input-pickup', 'pickup-autocomplete-list', true);
+    setupAutocomplete('input-destination', 'dest-autocomplete-list', false);
+
+    // Saved Places Clicks
+    document.querySelectorAll('#saved-places-list .place-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const lat = parseFloat(item.getAttribute('data-lat'));
+        const lng = parseFloat(item.getAttribute('data-lng'));
+        const name = item.getAttribute('data-name');
+
+        const destInput = document.getElementById('input-destination');
+        if (destInput) destInput.value = name;
+
+        destCoord = [lng, lat];
+        showToast('info', 'Destinasyon Chwazi', name);
+        updateRouteAndMap();
+      });
+    });
+
+    // "Kontinye nan Chwa Machin"
+    document.getElementById('btn-show-categories')?.addEventListener('click', async () => {
+      showStep('step-categories', 'half');
+      await updateRouteAndMap();
+    });
+
+    document.getElementById('btn-back-to-location')?.addEventListener('click', () => {
+      showStep('step-location', 'half');
+    });
+
+    // Category selection
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
+
+    // -------------------------------------------------------------
+    // Live Driver Dispatch & Real-Time Movement Simulation
+    // -------------------------------------------------------------
+    const driverState = {
+      id: 'driver-mackenzy',
+      name: 'Mackenzy Pierre',
+      plate: 'AA-12345',
+      category_id: 'standard',
+      lat: 18.5580,
+      lng: -72.3080,
+      heading: 45
+    };
+
+    // Calculate heading angle between two coordinates
+    function calcHeading(fromCoord, toCoord) {
+      const dLng = toCoord[0] - fromCoord[0];
+      const dLat = toCoord[1] - fromCoord[1];
+      let angle = Math.atan2(dLng, dLat) * 180 / Math.PI;
+      return (angle + 360) % 360;
+    }
+
+    // Step 1: Request Ride -> Searching -> Assigned
+    document.getElementById('btn-request-ride')?.addEventListener('click', async () => {
+      showStep('step-searching', 'half');
+
+      const userSession = await window.authService.getCurrentUser();
+      const userPhone = userSession?.profile?.phone || '50937123456';
+
+      // Send WhatsApp confirmation for requested ride
+      if (window.whatsappClient) {
+        window.whatsappClient.notifyRideRequested({
+          rider_phone: userPhone,
+          rider_name: userSession?.profile?.full_name || 'Pasaje',
+          trip_code: '582914',
+          pickup_address: document.getElementById('input-pickup')?.value || 'Aéroport Toussaint Louverture'
+        });
+      }
+
+      // Simulate dispatch finding nearby driver in 2.5 seconds
+      setTimeout(async () => {
+        showStep('step-assigned', 'half');
+        showToast('success', 'Chofè Twouve!', 'Mackenzy Pierre (AA-12345) ap vini pran w nan 3 minit.');
+
+        if (window.whatsappClient) {
+          window.whatsappClient.notifyDriverAssigned({
+            rider_phone: userPhone,
+            driver_name: 'Mackenzy Pierre',
+            vehicle_plate: 'AA-12345',
+            trip_code: '582914'
+          });
+        }
+
+        // Save active trip locally in IndexedDB
+        window.offlineDB.saveActiveTrip({
+          id: 'trip_' + Date.now(),
+          status: 'accepted',
+          trip_code: '582914',
+          pickup_address: document.getElementById('input-pickup')?.value || 'Aéroport Toussaint Louverture',
+          destination_address: document.getElementById('input-destination')?.value || 'Place Saint-Pierre, Pétion-Ville',
+          fare: 650,
+          driver: { name: 'Mackenzy Pierre', plate: 'AA-12345' }
+        });
+
+        // Start Driver Approach Animation along road network
+        startDriverApproach();
+      }, 2500);
+    });
+
+    // Phase 1: Driver approaching passenger pickup location
+    async function startDriverApproach() {
+      clearInterval(approachInterval);
+      clearInterval(tripProgressInterval);
+
+      // Start position: near Route de Delmas (~1.5 km away)
+      let currentDriverLng = -72.3080;
+      let currentDriverLat = 18.5580;
+
+      // Initial placement on map
+      kmap.updateFleet([{
+        ...driverState,
+        lat: currentDriverLat,
+        lng: currentDriverLng,
+        label: 'Mackenzy (AA-12345)'
+      }]);
+
+      // Calculate real driving approach route
+      const approachRoute = await routingService.getRoute([currentDriverLng, currentDriverLat], pickupCoord);
+      const waypoints = (approachRoute && approachRoute.coordinates && approachRoute.coordinates.length > 2)
+        ? approachRoute.coordinates
+        : [[currentDriverLng, currentDriverLat], pickupCoord];
+
+      let wpIndex = 0;
+      const totalWp = waypoints.length;
+
+      approachInterval = setInterval(() => {
+        if (wpIndex >= totalWp - 1) {
+          clearInterval(approachInterval);
+          // Driver has arrived at pickup location!
+          kmap.updateFleet([{
+            ...driverState,
+            lat: pickupCoord[1],
+            lng: pickupCoord[0],
+            heading: 0,
+            label: 'Mackenzy (Sou plas)'
+          }]);
+
+          document.getElementById('trip-status-text').textContent = 'Chofè a rive sou plas';
+          document.getElementById('driver-eta-label').textContent = 'Sou plas';
+          showToast('success', 'Chofè a Rive!', 'Mackenzy Pierre sou plas kote w la, pare pou pran w.');
+
+          const btnStart = document.getElementById('btn-start-trip');
+          if (btnStart) {
+            btnStart.classList.add('pulse-highlight');
+            btnStart.scrollIntoView({ behavior: 'smooth' });
+          }
+
+          if (window.whatsappClient) {
+            window.whatsappClient.notifyDriverArrived({
+              rider_phone: '50937123456',
+              driver_name: 'Mackenzy Pierre'
+            });
+          }
+          return;
+        }
+
+        const prevPoint = waypoints[wpIndex];
+        const nextPoint = waypoints[wpIndex + 1];
+        const heading = calcHeading(prevPoint, nextPoint);
+
+        wpIndex++;
+        const currentCoord = waypoints[wpIndex];
+
+        kmap.updateFleet([{
+          ...driverState,
+          lat: currentCoord[1],
+          lng: currentCoord[0],
+          heading: heading,
+          label: 'Mackenzy (AA-12345)'
+        }]);
+
+        // Countdown ETA in UI
+        const remainingPct = (totalWp - wpIndex) / totalWp;
+        const etaMin = Math.max(1, Math.ceil(remainingPct * 3));
+        const etaLabel = document.getElementById('driver-eta-label');
+        if (etaLabel) etaLabel.textContent = `${etaMin} min`;
+
+      }, 1000);
+    }
+
+    // Phase 2: Start Trip (Passenger enters car and travels to destination)
+    document.getElementById('btn-start-trip')?.addEventListener('click', () => {
+      clearInterval(approachInterval);
+      showStep('step-in-progress', 'half');
+      showToast('info', 'Kous la Kòmanse', 'Bon vwayaj! N ap mennen w nan destinasyon w.');
+      startTripProgress();
+    });
+
+    async function startTripProgress() {
+      clearInterval(tripProgressInterval);
+
+      if (!currentTripRoute || !currentTripRoute.coordinates || currentTripRoute.coordinates.length < 2) {
+        currentTripRoute = await routingService.getRoute(pickupCoord, destCoord);
+      }
+
+      const tripWaypoints = currentTripRoute.coordinates;
+      let wpIndex = 0;
+      const totalWp = tripWaypoints.length;
+
+      // Start right from pickup location
+      kmap.updateFleet([{
+        ...driverState,
+        lat: pickupCoord[1],
+        lng: pickupCoord[0],
+        heading: 0,
+        label: 'Nan kous...'
+      }]);
+
+      tripProgressInterval = setInterval(() => {
+        if (wpIndex >= totalWp - 1) {
+          clearInterval(tripProgressInterval);
+          // Arrival at destination!
+          kmap.updateFleet([{
+            ...driverState,
+            lat: destCoord[1],
+            lng: destCoord[0],
+            heading: 0,
+            label: 'Rive nan destinasyon!'
+          }]);
+
+          showToast('success', 'Ou Rive nan Destinasyon w!', 'Kous la fini avèk siksè.');
+          setTimeout(() => {
+            showStep('step-completed', 'half');
+            if (window.whatsappClient) {
+              window.whatsappClient.notifyRideCompleted({
+                rider_phone: '50937123456',
+                fare: 650,
+                distance: currentTripRoute.distanceKm || 8.4
+              });
+            }
+          }, 1200);
+          return;
+        }
+
+        const prevPoint = tripWaypoints[wpIndex];
+        const nextPoint = tripWaypoints[wpIndex + 1];
+        const heading = calcHeading(prevPoint, nextPoint);
+
+        wpIndex++;
+        const currentCoord = tripWaypoints[wpIndex];
+
+        kmap.updateFleet([{
+          ...driverState,
+          lat: currentCoord[1],
+          lng: currentCoord[0],
+          heading: heading,
+          label: 'Nan kous...'
+        }]);
+
+        // Smoothly follow car with map camera
+        if (kmap.map && typeof kmap.map.panTo === 'function') {
+          kmap.map.panTo([currentCoord[1], currentCoord[0]], { animate: true, duration: 0.6 });
+        }
+
+      }, 1000);
+    }
+
+    document.getElementById('btn-cancel-search')?.addEventListener('click', () => {
+      clearInterval(approachInterval);
+      clearInterval(tripProgressInterval);
+      showStep('step-categories', 'half');
+      showToast('info', 'Demann Anile', 'Demann kous la anile.');
+    });
+
+    // Share ride link
+    document.getElementById('btn-share-ride')?.addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({ title: 'KOURI — Kous Mwen', url: window.location.href });
+      } else {
+        showToast('info', 'Lyen Kopye', 'Lyen swivi kous la kopye nan klipbòd ou.');
+      }
+    });
+
+    document.getElementById('btn-sos-rider')?.addEventListener('click', () => {
+      if (confirm('Èske w nan yon ijans reyèl? Bouton sa a voye kowòdone GPS ou imedyatman bay sant sekirite nou.')) {
+        showToast('error', 'SOS AKTIVE', 'Ekip sipò ak sekirite KOURI ap kontakte w imedyatman.');
+      }
+    });
+
+    // Complete demo ride manually if desired
+    document.getElementById('btn-complete-demo-ride')?.addEventListener('click', async () => {
+      clearInterval(tripProgressInterval);
+      showStep('step-completed', 'half');
+      showToast('success', 'Kous Fini', 'Mèsi paske w te vwayaje ak KOURI.');
+    });
+
+    // Rating star clicks
+    document.querySelectorAll('#star-rating-box button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const star = parseInt(btn.getAttribute('data-star'));
+        document.querySelectorAll('#star-rating-box button').forEach((b, idx) => {
+          const svg = b.querySelector('svg');
+          if (idx < star) {
+            svg.style.fill = '#D97706';
+          } else {
+            svg.style.fill = 'none';
+          }
+        });
+      });
+    });
+
+    document.getElementById('btn-finish-rating')?.addEventListener('click', () => {
+      showToast('success', 'Mèsi!', 'Evalyasyon ou anrejistre avèk siksè.');
+      showStep('step-location', 'half');
+      updateRouteAndMap();
+    });
+
+    // -------------------------------------------------------------
+    // Rider Drawer Menu & Account Actions
+    // -------------------------------------------------------------
+    const drawer = document.getElementById('rider-account-drawer');
+    const deleteModal = document.getElementById('rider-delete-modal');
+
+    // Populate user profile info in drawer
+    (async () => {
+      try {
+        const session = await window.authService.getCurrentUser();
+        const profile = session?.profile || { full_name: 'Pasaje KOURI', phone: '509 3123-4567' };
+        if (profile.full_name) {
+          document.getElementById('drawer-user-name').textContent = profile.full_name;
+        }
+        if (profile.phone) {
+          document.getElementById('drawer-user-phone').textContent = profile.phone;
+        }
+      } catch(e) {}
+    })();
+
+    document.getElementById('btn-open-user-menu')?.addEventListener('click', () => {
+      drawer.style.display = 'block';
+    });
+
+    document.getElementById('btn-close-user-menu')?.addEventListener('click', () => {
+      drawer.style.display = 'none';
+    });
+
+    drawer?.addEventListener('click', (e) => {
+      if (e.target === drawer) drawer.style.display = 'none';
+    });
+
+    document.getElementById('btn-drawer-logout')?.addEventListener('click', async () => {
+      await window.authService.signOut();
+    });
+
+    document.getElementById('btn-drawer-delete')?.addEventListener('click', () => {
+      drawer.style.display = 'none';
+      deleteModal.style.display = 'flex';
+    });
+
+    document.getElementById('btn-cancel-rider-delete')?.addEventListener('click', () => {
+      deleteModal.style.display = 'none';
+    });
+
+    document.getElementById('btn-confirm-rider-delete')?.addEventListener('click', async () => {
+      showToast('info', 'Sipresyon Kont', 'N ap retire done ou yo...');
+      await window.authService.deleteAccount();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Kont Mwen — KOURI</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <!-- Account Header with Avatar Upload Slot -->
+      <div class="card" style="margin-bottom: 24px; padding: 24px;">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+          <div style="position:relative;">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160" id="user-avatar-img" style="width:84px; height:84px; border-radius:50%; object-fit:cover; border:2px solid var(--border);" alt="Avatar">
+            <label for="avatar-file-input" style="position:absolute; bottom:0; right:0; width:28px; height:28px; border-radius:50%; background:var(--ink); color:#FFF; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Chanje foto">
+              <i data-lucide="camera" style="width:14px; height:14px;"></i>
+              <input type="file" id="avatar-file-input" accept="image/*" style="display:none;">
+            </label>
+          </div>
+          <div style="flex:1;">
+            <div class="badge badge-primary" style="margin-bottom:4px;">Pasaje Verifye</div>
+            <h2 style="font-size:1.5rem; margin-bottom:2px;" id="account-full-name">Jean-Baptiste Delva</h2>
+            <div style="color:var(--text-muted); font-size:0.875rem;" id="account-phone">+509 3712-3456</div>
+            <div style="color:var(--text-muted); font-size:0.875rem;" id="account-email">pasaje@kouri.ht</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Sections -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        
+        <!-- Saved Places -->
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:1.15rem;" data-i18n="saved_places">Kote ou anrejistre</h3>
+            <button type="button" class="btn btn-outline btn-sm" onclick="showToast('info', 'Ajoute', 'Fonksyon ajoute kote aktif.')">
+              <i data-lucide="plus"></i> Ajoute
+            </button>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--surface-alt); border-radius:var(--radius-md);">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i data-lucide="home" style="width:18px; height:18px; color:var(--ink);"></i>
+                <div>
+                  <div style="font-weight:700; font-size:0.875rem;">Kay / Home</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Delmas 75, Rue Clercine</div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm"><i data-lucide="edit-2" style="width:14px; height:14px;"></i></button>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--surface-alt); border-radius:var(--radius-md);">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i data-lucide="briefcase" style="width:18px; height:18px; color:var(--ink);"></i>
+                <div>
+                  <div style="font-weight:700; font-size:0.875rem;">Biwo / Work</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Rue Pan Américaine, Pétion-Ville</div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm"><i data-lucide="edit-2" style="width:14px; height:14px;"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Language & Currency Preferences -->
+        <div class="card">
+          <h3 style="font-size:1.15rem; margin-bottom:14px;">Lang ak Lajan</h3>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+            <div>
+              <label class="form-label">Lang Sistèm nan</label>
+              <select class="form-select" id="pref-lang" onchange="window.i18n.setLang(this.value)">
+                <option value="ht">Kreyòl Ayisyen (HT)</option>
+                <option value="fr">Français (FR)</option>
+                <option value="en">English (EN)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Lajan Afichaj</label>
+              <select class="form-select" id="pref-currency" onchange="window.i18n.setCurrency(this.value)">
+                <option value="HTG">Goud (HTG - Prensipal)</option>
+                <option value="USD">Dola Ameriken (USD)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency / Safety Contacts -->
+        <div class="card">
+          <div class="card-header">
+            <h3 style="font-size:1.15rem;">Kontak Ijans (SOS)</h3>
+            <button type="button" class="btn btn-outline btn-sm">
+              <i data-lucide="plus"></i> Ajoute Kontak
+            </button>
+          </div>
+          <p style="font-size:0.85rem; margin-bottom:12px;">Kontak sa yo ap resevwa kowòdone GPS ou ak lyen kous ou si w deklanche bouton SOS la.</p>
+          <div style="padding:10px; background:var(--surface-alt); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.875rem;">Marie Delva (Fanmi)</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">+509 3899-0011</div>
+            </div>
+            <span class="badge badge-success">Aktif</span>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <div>
+          <button type="button" class="btn btn-danger btn-block btn-lg" onclick="window.authService.signOut()">
+            <i data-lucide="log-out"></i>
+            <span data-i18n="nav_logout">Dekonekte</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+
+  <script>
+    // Set selects to current i18n
+    document.getElementById('pref-lang').value = window.i18n.getLang();
+    document.getElementById('pref-currency').value = window.i18n.getCurrency();
+
+    // Handle avatar preview upload
+    document.getElementById('avatar-file-input')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          document.getElementById('user-avatar-img').src = re.target.result;
+          showToast('success', 'Foto Chanje', 'Nouvo foto ou an anrejistre.');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

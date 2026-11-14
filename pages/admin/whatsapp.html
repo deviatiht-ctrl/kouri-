@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="CVISUAL WhatsApp Gateway">
+  <title>WhatsApp Gateway — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div class="badge badge-success" style="margin-bottom:6px;">
+              <i data-lucide="check-circle-2"></i> Gateway Konekte & Aktif
+            </div>
+            <h2 style="font-size:1.6rem; margin-bottom:4px;">Kontwòl CVISUAL WhatsApp Gateway</h2>
+            <p style="font-size:0.875rem;">Jere notifikasyon otomatik, liy WhatsApp, woutaj Fast Lane vs Slow Lane, ak limit Meta.</p>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="btn-refresh-status">
+            <i data-lucide="refresh-cw"></i> Rafrechi Estati
+          </button>
+        </div>
+
+        <!-- KPI Status Grid -->
+        <div class="kpi-grid" style="margin-bottom:28px;">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Liy WhatsApp Aktif</span>
+              <div class="kpi-icon" style="background:var(--success-subtle); color:var(--success);">
+                <i data-lucide="phone-call"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-active-line">+509 5616-4468</div>
+            <div class="kpi-trend trend-up">
+              <i data-lucide="check"></i> Estati: READY (Konekte)
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Kota Disponib Jodi a</span>
+              <div class="kpi-icon">
+                <i data-lucide="message-square"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-quota-today">5,000 / 5,000</div>
+            <div class="kpi-trend trend-up">
+              <span>Plan: Enterprise (100k/mwa)</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Fast Lane (~2.5s)</span>
+              <div class="kpi-icon" style="background:var(--accent-subtle); color:var(--accent);">
+                <i data-lucide="zap"></i>
+              </div>
+            </div>
+            <div class="kpi-value">Aktif</div>
+            <div class="kpi-trend trend-up">
+              <span>Resi, Byenveni, Kòd PIN</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Anti-Ban Meta</span>
+              <div class="kpi-icon" style="background:var(--success-subtle); color:var(--success);">
+                <i data-lucide="shield-check"></i>
+              </div>
+            </div>
+            <div class="kpi-value">Pwoteje</div>
+            <div class="kpi-trend trend-up">
+              <span>Spintax & Delè Pwoteksyon</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Automated Triggers Controller Section -->
+        <div class="card" style="margin-bottom:28px;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Evènman Otomatik KOURI (Automatic Triggers)</h3>
+              <p style="font-size:0.85rem;">Mesaj sa yo voye otomatikman pa WhatsApp san okenn entèvansyon manyèl.</p>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+            <div class="card" style="background:var(--surface-alt); padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong>1. Enskripsyon Pasaje / Chofè</strong>
+                <span class="badge badge-success">Fast Lane</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+                Voye yon mesaj akeyi cho (Welcome) ak lyen aplikasyon an le pli vit yon moun kreye yon kont.
+              </p>
+              <div style="font-size:0.75rem; background:#FFF; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:monospace;">
+                "{Bonjou|Bonswa} Jean, Byenveni sou KOURI..."
+              </div>
+            </div>
+
+            <div class="card" style="background:var(--surface-alt); padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong>2. Demann Kous & Kòd PIN</strong>
+                <span class="badge badge-success">Fast Lane</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+                Voye kòd sekirite 6 chif la sou WhatsApp pasaje a imedyatman li fin kòmande.
+              </p>
+              <div style="font-size:0.75rem; background:#FFF; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:monospace;">
+                "Kòd sekirite pou bay chofè a: *582 914*..."
+              </div>
+            </div>
+
+            <div class="card" style="background:var(--surface-alt); padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong>3. Chofè Asiyen & Rive</strong>
+                <span class="badge badge-success">Fast Lane</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+                Notifye pasaje a lè chofè a pran kous la ak lè li rive devan pòt li.
+              </p>
+              <div style="font-size:0.75rem; background:#FFF; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:monospace;">
+                "Chofè Mackenzy Pierre (AA-12345) rive sou plas!"
+              </div>
+            </div>
+
+            <div class="card" style="background:var(--surface-alt); padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong>4. Kous Fini & Resi PDF</strong>
+                <span class="badge badge-success">Fast Lane</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+                Voye montan final kous la ak resi a sou WhatsApp pasaje a lè kous la fini.
+              </p>
+              <div style="font-size:0.75rem; background:#FFF; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:monospace;">
+                "Kous Fini! Montan: 650 HTG (8.4 km)..."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testing & Number Check Tools -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:20px; margin-bottom:28px;">
+          
+          <!-- Test Message Sender -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:14px;">Voye yon Mesaj Tès WhatsApp</h3>
+            <form id="form-test-wa">
+              <div class="form-group">
+                <label class="form-label">Nimewo Telefòn Destinatè</label>
+                <input type="tel" class="form-input" id="test-wa-phone" placeholder="Eg: 50937123456 oswa 37123456" required>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+                  8 chif lokal otomatikman konvèti an +509.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Woutaj / Lane</label>
+                <select class="form-select" id="test-wa-kind">
+                  <option value="test">Fast Lane — Tès Dirèk (test)</option>
+                  <option value="welcome">Fast Lane — Byenveni (welcome)</option>
+                  <option value="receipt">Fast Lane — Resi (receipt)</option>
+                  <option value="otp">Fast Lane — Kòd PIN (otp)</option>
+                  <option value="marketing">Slow Lane — Kanpay / Relans (marketing)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Mesaj (Avèk Sipò Spintax)</label>
+                <textarea class="form-textarea" rows="3" id="test-wa-msg" required>{Bonswa|Bonjou}! Sa a se yon mesaj tès ofisyèl ki soti sou KOURI WhatsApp Gateway.</textarea>
+              </div>
+
+              <button type="submit" id="btn-submit-test-wa" class="btn btn-primary btn-block btn-lg">
+                <i data-lucide="send"></i> Voye sou WhatsApp
+              </button>
+            </form>
+          </div>
+
+          <!-- Number Validation Tool (/api/v1/numbers/check) -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:14px;">Verifye si Nimewo a Gen WhatsApp</h3>
+            <p style="font-size:0.85rem; margin-bottom:14px;">Tcheke nimewo yon pasaje oswa chofè anvan ou voye notifikasyon pou evite erè.</p>
+
+            <form id="form-check-number">
+              <div class="form-group">
+                <label class="form-label">Nimewo pou Verifye</label>
+                <input type="text" class="form-input" id="check-phone-input" placeholder="Eg: 37123456, 48112233" required>
+              </div>
+
+              <button type="submit" id="btn-check-number" class="btn btn-outline btn-block btn-md">
+                <i data-lucide="check"></i> Tcheke Nimewo
+              </button>
+            </form>
+
+            <div id="check-number-result" style="margin-top:16px; display:none;"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+
+  <script>
+    async function loadGatewayStatus() {
+      try {
+        const [meRes, statusRes] = await Promise.all([
+          fetch('/api/whatsapp/me').then(r => r.json()).catch(() => null),
+          fetch('/api/whatsapp/status').then(r => r.json()).catch(() => null)
+        ]);
+
+        if (meRes && meRes.tenant) {
+          const quota = meRes.usage;
+          document.getElementById('kpi-quota-today').textContent = `${quota.remaining_today} / ${meRes.tenant.daily_quota}`;
+        }
+
+        if (statusRes && statusRes.lines) {
+          const readyLine = statusRes.lines.find(l => l.ready);
+          if (readyLine) {
+            document.getElementById('kpi-active-line').textContent = `Liy #${readyLine.account_index} (READY)`;
+          }
+        }
+      } catch (e) {
+        console.warn('Gateway status fetch note:', e);
+      }
+    }
+
+    document.getElementById('btn-refresh-status')?.addEventListener('click', () => {
+      loadGatewayStatus();
+      showToast('success', 'Rafrechi', 'Estati WhatsApp Gateway mete ajou.');
+    });
+
+    // Send Test Message
+    document.getElementById('form-test-wa')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById('test-wa-phone').value.trim();
+      const kind = document.getElementById('test-wa-kind').value;
+      const message = document.getElementById('test-wa-msg').value;
+      const btn = document.getElementById('btn-submit-test-wa');
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>N ap voye...</span>`;
+
+      try {
+        const res = await fetch('/api/whatsapp/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: phone,
+            message,
+            kind,
+            mode: 'async'
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          showToast('success', 'Mesaj Voye!', `Mesaj voye avèk siksè bay ${phone}.`);
+        } else {
+          showToast('error', 'Erè Voye', data.error || data.detail || 'Pa ka voye mesaj la kounye a.');
+        }
+      } catch (err) {
+        showToast('error', 'Erè Koneksyon', err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send"></i> Voye sou WhatsApp`;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    });
+
+    // Check Number
+    document.getElementById('form-check-number')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById('check-phone-input').value.trim();
+      const resBox = document.getElementById('check-number-result');
+      const btn = document.getElementById('btn-check-number');
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/whatsapp/check-numbers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phones: [phone] })
+        });
+        const data = await res.json();
+        resBox.style.display = 'block';
+
+        if (res.ok) {
+          resBox.innerHTML = `
+            <div style="padding:12px; background:var(--success-subtle); border-radius:var(--radius-md); border:1px solid rgba(5,150,105,0.2);">
+              <div style="font-weight:700; color:var(--success);">Nimewo a gen WhatsApp aktif!</div>
+              <div style="font-size:0.8rem; margin-top:4px;">Nimewo valide: <code>${phone}</code></div>
+            </div>
+          `;
+        } else {
+          resBox.innerHTML = `
+            <div style="padding:12px; background:var(--danger-subtle); border-radius:var(--radius-md); border:1px solid rgba(220,38,38,0.2);">
+              <div style="font-weight:700; color:var(--danger);">Erè verifikasyon nimewo</div>
+              <div style="font-size:0.8rem; margin-top:4px;">${data.error || 'Nimewo sa a pa jwenn sou WhatsApp.'}</div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        resBox.style.display = 'block';
+        resBox.innerHTML = `<div style="color:var(--danger);">Erè: ${err.message}</div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    loadGatewayStatus();
+  </script>
+</body>
+</html>

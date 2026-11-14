@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Pasaje Abònman Mwen — KOURI Chofè</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <div style="margin-bottom: 24px;">
+        <div class="badge badge-accent" style="margin-bottom: 8px;">Revni Garanti</div>
+        <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Pasaje Abònman Dedye</h1>
+        <p>Pasaje sa yo te chwazi w oswa administrasyon an te asiyen w pou transpòte yo sou orè regilye.</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        
+        <!-- Assigned Subscriber 1 -->
+        <div class="card" style="border: 1.5px solid var(--ink);">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" alt="Pasaje">
+              <div>
+                <div style="font-weight:700; font-size:1.05rem;">Jean-Baptiste Delva</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Abònman Wout Travay (20 kous/mwa)</div>
+              </div>
+            </div>
+            <span class="badge badge-success">Aktif</span>
+          </div>
+
+          <div style="background:var(--surface-alt); padding:12px; border-radius:var(--radius-md); margin-bottom:14px; font-size:0.85rem;">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-weight:700; color:var(--accent);">
+              <i data-lucide="clock" style="width:14px; height:14px;"></i> Orè Maten & Aprèmidi: 07:45 & 17:00 (Lendi - Vandredi)
+            </div>
+            <div style="margin-bottom:4px;">
+              <strong>Depa Maten:</strong> Delmas 75, Rue Clercine
+            </div>
+            <div>
+              <strong>Destinasyon:</strong> Place Saint-Pierre, Pétion-Ville
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              Kous fèt mwa sa a: 6 / 20 • Pèman asire pa KOURI
+            </div>
+            <div style="display:flex; gap:8px;">
+              <a href="tel:+50937123456" class="btn btn-outline btn-sm">
+                <i data-lucide="phone"></i> Rele
+              </a>
+              <button type="button" class="btn btn-primary btn-sm" onclick="showToast('info', 'Notifikasyon', 'Pasaje a resevwa mesaj ke ou sou wout la.')">
+                <i data-lucide="navigation"></i> Kòmanse Wout
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assigned Subscriber 2 -->
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" alt="Pasaje">
+              <div>
+                <div style="font-weight:700; font-size:1.05rem;">Valérie Lamothe</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Pake Lekòl / Fanmi Semèn</div>
+              </div>
+            </div>
+            <span class="badge badge-primary">Semèn</span>
+          </div>
+
+          <div style="background:var(--surface-alt); padding:12px; border-radius:var(--radius-md); margin-bottom:14px; font-size:0.85rem;">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-weight:700; color:var(--ink);">
+              <i data-lucide="clock" style="width:14px; height:14px;"></i> Orè: 07:15 & 13:30 (Depoze & Chache Lekòl)
+            </div>
+            <div style="margin-bottom:4px;">
+              <strong>Wout:</strong> Pétion-Ville (Mòn Kalvè) → Institution Sainte-Rose de Lima
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              Kous fèt semèn sa a: 4 / 10
+            </div>
+            <div style="display:flex; gap:8px;">
+              <a href="tel:+50938001122" class="btn btn-outline btn-sm">
+                <i data-lucide="phone"></i> Rele
+              </a>
+              <button type="button" class="btn btn-primary btn-sm" onclick="showToast('info', 'Notifikasyon', 'Pasaje a resevwa mesaj ke ou sou wout la.')">
+                <i data-lucide="navigation"></i> Kòmanse Wout
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+</body>
+</html>

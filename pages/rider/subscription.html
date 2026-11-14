@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Abònman Mwen — KOURI</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <div style="margin-bottom: 28px;">
+        <div class="badge badge-accent" style="margin-bottom: 8px;">Priyorite & Ekonomi</div>
+        <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);" data-i18n="subscription_title">Abònman Mwen</h1>
+        <p>Jere plan kous ou, chofè dedye ou, ak orè disponiblite ou.</p>
+      </div>
+
+      <!-- ACTIVE SUBSCRIPTION CARD -->
+      <div class="card" style="border: 2px solid var(--ink); margin-bottom: 32px; box-shadow: var(--shadow-sm);">
+        <div class="card-header">
+          <div>
+            <span class="badge badge-success" style="margin-bottom:6px;">Aktif</span>
+            <h2 style="font-size: 1.4rem;">Abònman Wout Travay (Commuter Pass)</h2>
+            <div style="font-size:0.85rem; color:var(--text-muted);">Mwa Novanm 2026 • Renouvle otomatikman</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:1.4rem; font-weight:800; font-family:var(--font-heading); color:var(--ink);" data-money-htg="12500">12,500 HTG</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">pa mwa</div>
+          </div>
+        </div>
+
+        <!-- Usage progress bar -->
+        <div style="background:var(--surface-alt); border-radius:var(--radius-md); padding:16px; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem;">
+            <span style="font-weight:600;">Kous ki rete:</span>
+            <span style="font-weight:800; color:var(--ink);">14 sou 20 kous</span>
+          </div>
+          <div style="height:8px; width:100%; background:var(--border); border-radius:var(--radius-full); overflow:hidden;">
+            <div style="height:100%; width:70%; background:var(--accent); border-radius:var(--radius-full);"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.75rem; color:var(--text-muted);">
+            <span>Kòmanse: 1 Nov 2026</span>
+            <span>Ekspire: 30 Nov 2026</span>
+          </div>
+        </div>
+
+        <!-- ASSIGNED DEDICATED DRIVER SECTION (Requested explicitly in prompt) -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">
+            Chofè Dedye Asiyen Pou Ou
+          </div>
+          
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:14px; border:1px solid var(--border); border-radius:var(--radius-lg); flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120" style="width:54px; height:54px; border-radius:50%; object-fit:cover; border:2px solid var(--border);" alt="Chofè">
+              <div>
+                <div style="font-weight:800; font-size:1.05rem;">Mackenzy Pierre</div>
+                <div style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                  <i data-lucide="star" style="width:13px; height:13px; fill:#D97706; color:#D97706;"></i>
+                  <span>4.92 (380+ kous)</span> • <span>Toyota Corolla (Nwa)</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--accent); font-weight:600; margin-top:3px;">
+                  <i data-lucide="clock" style="width:12px; height:12px;"></i> Orè: 07:30 - 18:00 (Lendi - Vandredi)
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <a href="tel:+50948112233" class="btn btn-outline btn-sm">
+                <i data-lucide="phone"></i> Rele
+              </a>
+              <span class="badge badge-primary">Plak: AA-12345</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plan Coverage & Benefits -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:20px; font-size:0.85rem;">
+          <div style="padding:10px; background:var(--surface-alt); border-radius:var(--radius-md);">
+            <div style="font-weight:700; color:var(--ink);">Zòn Kouvri</div>
+            <div style="color:var(--text-muted);">Petyonvil, Dèlma, Aewopò</div>
+          </div>
+          <div style="padding:10px; background:var(--surface-alt); border-radius:var(--radius-md);">
+            <div style="font-weight:700; color:var(--ink);">Kategori Machin</div>
+            <div style="color:var(--text-muted);">Kouri Klasik & Moto</div>
+          </div>
+          <div style="padding:10px; background:var(--surface-alt); border-radius:var(--radius-md);">
+            <div style="font-weight:700; color:var(--ink);">Priyorite Dispatch</div>
+            <div style="color:var(--success); font-weight:600;">100% Garanti</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:16px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="showToast('info', 'Renouvèlman', 'Renouvèlman otomatik aktif pou 1 Desanm 2026.')">
+            <i data-lucide="refresh-cw"></i> Chanje / Renouvle
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="confirm('Èske ou sèten ou vle anile abònman sa a?') && showToast('warning', 'Anile', 'Abònman w ap rete aktif jiska fen mwa a.')">
+            Anile Abònman
+          </button>
+        </div>
+      </div>
+
+      <!-- AVAILABLE PLANS TO EXPLORE -->
+      <div style="margin-top: 40px;">
+        <h2 style="font-size:1.3rem; margin-bottom:16px;" data-i18n="available_plans">Lòt Plan ki disponib yo</h2>
+        
+        <div style="display:grid; grid-template-columns: 1fr; gap:16px;">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 style="font-size:1.15rem;">Kouri Biznis VIP San Limit</h3>
+                <p style="font-size:0.85rem;">Kous san limit nan tout zòn Pòtoprens ak chofè Konfò dedye.</p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.25rem; font-weight:800; font-family:var(--font-heading); color:var(--ink);" data-money-htg="35000">35,000 HTG</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">pa mwa</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm btn-block" onclick="showToast('info', 'KOURI VIP', 'Kontakte sèvis kliyan oswa rechaje bous ou pou aktive.')">
+              Chwazi Plan Sa A
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 style="font-size:1.15rem;">Pake Lekòl / Fanmi Semèn</h3>
+                <p style="font-size:0.85rem;">10 kous pa semèn pou depoze e chache timoun lekòl an sekirite.</p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.25rem; font-weight:800; font-family:var(--font-heading); color:var(--ink);" data-money-htg="4500">4,500 HTG</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">pa semèn</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm btn-block" onclick="showToast('info', 'Pake Lekòl', 'Rechaje bous ou pou aktive plan semèn sa a.')">
+              Chwazi Plan Sa A
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+</body>
+</html>

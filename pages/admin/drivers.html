@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Jesyon Chofè yo">
+  <title>Chofè — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; margin-bottom:4px;">Chofè Patnè KOURI</h2>
+            <p style="font-size:0.875rem;">Verifye dokiman, apwouve aplikasyon, oswa sispann kont.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-outline btn-sm active">Tout (42)</button>
+            <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);">Ap Tann Apwobasyon (3)</button>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Chofè</th>
+                <th>Telefòn</th>
+                <th>Machin & Plak</th>
+                <th>Kategori</th>
+                <th>Nòt</th>
+                <th>Kous Fèt</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Chofè">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80" style="width:36px; height:36px; border-radius:50%; object-fit:cover;" alt="Avatar">
+                    <div>
+                      <div style="font-weight:700;">Mackenzy Pierre</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">chofe@kouri.ht</div>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Telefòn">+509 4811-2233</td>
+                <td data-label="Machin">Toyota Corolla (AA-12345)</td>
+                <td data-label="Kategori"><span class="badge badge-primary">Klasik</span></td>
+                <td data-label="Nòt"><strong>4.92</strong></td>
+                <td data-label="Kous">382</td>
+                <td data-label="Estati"><span class="badge badge-success">Apwouve</span></td>
+                <td data-label="Aksyon">
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="showToast('info', 'Dokiman', 'Dokiman chofè a apwouve.')">Dokiman</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="confirm('Sispann chofè sa a?') && showToast('warning', 'Sispann', 'Chofè a sispann.')">Sispann</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr style="background:#FFFBEB;">
+                <td data-label="Chofè">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80" style="width:36px; height:36px; border-radius:50%; object-fit:cover;" alt="Avatar">
+                    <div>
+                      <div style="font-weight:700;">Dario Sylvain</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">dario@gmail.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Telefòn">+509 3677-1122</td>
+                <td data-label="Machin">Hyundai Elantra (BB-99120)</td>
+                <td data-label="Kategori"><span class="badge badge-accent">Konfò</span></td>
+                <td data-label="Nòt">-</td>
+                <td data-label="Kous">0</td>
+                <td data-label="Estati"><span class="badge badge-warning">Ap Tann</span></td>
+                <td data-label="Aksyon">
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="showToast('success', 'Apwouve!', 'Chofè Dario apwouve sou KOURI.')">Apwouve</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="showToast('info', 'Rejte', 'Aplikasyon an rejte.')">Rejte</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+</body>
+</html>

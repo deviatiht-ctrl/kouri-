@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Konekte — KOURI</title>
+  
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh; display:flex; flex-direction:column;">
+
+  <!-- Desktop Navbar -->
+  <div id="kouri-navbar"></div>
+
+  <main style="flex:1; display:flex; align-items:center; justify-content:center; padding: clamp(80px, 12vw, 120px) 16px 40px 16px;">
+    <div style="width:100%; max-width:440px;">
+      
+      <!-- Brand Logo Header -->
+      <div style="text-align:left; margin-bottom: 28px;">
+        <div data-kouri-logo data-logo-height="36" style="margin-bottom: 20px;">
+          <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:36px;">
+        </div>
+        <h1 style="font-size: 2rem; margin-bottom: 8px;" data-i18n="nav_login">Konekte</h1>
+        <p style="font-size: 0.95rem;">Antre kowòdone ou pou w jwenn kont ou oswa kòmande yon kous.</p>
+      </div>
+
+      <!-- Login Form Card -->
+      <div class="card" style="box-shadow: var(--shadow-md);">
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Imèl oswa Telefòn</label>
+            <div class="input-with-icon">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="login-email" class="form-input" placeholder="imel@egzanp.ht" required autofocus>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">
+              <label for="login-password">Modpas</label>
+              <a href="/forgot-password.html" style="font-size: 0.8rem; color:var(--accent);">Bliye modpas?</a>
+            </div>
+            <div class="input-with-icon">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-login" class="btn btn-primary btn-block btn-lg" style="margin-top: 12px;">
+            <i data-lucide="log-in"></i>
+            <span data-i18n="nav_login">Konekte</span>
+          </button>
+        </form>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); text-align:center; font-size:0.9rem;">
+          <span style="color:var(--text-muted);">Ou poko gen yon kont?</span>
+          <a href="/register.html" style="font-weight:700; color:var(--ink); margin-left:6px;" data-i18n="nav_register">Kreye yon kont</a>
+        </div>
+      </div>
+
+      <!-- Quick Demo Switcher (Instant testing for rider, driver, admin) -->
+      <div class="card" style="margin-top: 20px; background:var(--surface-alt); border-style:dashed;">
+        <div style="font-size: 0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:10px;">
+          Tès Rapid (Mòd Demo):
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.authService.loginAsDemo('rider')">
+            <i data-lucide="user" style="width:14px; height:14px;"></i> Pasaje
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.authService.loginAsDemo('driver')">
+            <i data-lucide="car" style="width:14px; height:14px;"></i> Chofè
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.authService.loginAsDemo('admin')" style="color:var(--accent);">
+            <i data-lucide="shield" style="width:14px; height:14px;"></i> Admin
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="text-align:center;">
+      <div class="footer-credit" data-i18n="designed_by">Designed by Cvisual</div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/offline/db.js"></script>
+  <script src="/assets/js/offline/outbox.js"></script>
+  <script src="/assets/js/offline/sync.js"></script>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      const btn = document.getElementById('btn-submit-login');
+
+      try {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="skeleton-text" style="width:60px; height:18px;"></span>`;
+        await window.authService.signIn(email, pass);
+      } catch (err) {
+        showToast('error', 'Erè Koneksyon', err.message || 'Tanpri verifye imèl oswa modpas ou.');
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="log-in"></i> <span>Konekte</span>`;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

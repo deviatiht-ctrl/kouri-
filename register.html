@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Kreye yon kont — KOURI</title>
+  
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh; display:flex; flex-direction:column;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="flex:1; display:flex; align-items:center; justify-content:center; padding: clamp(80px, 12vw, 120px) 16px 40px 16px;">
+    <div style="width:100%; max-width:480px;">
+      
+      <div style="text-align:left; margin-bottom: 24px;">
+        <div data-kouri-logo data-logo-height="36" style="margin-bottom: 16px;">
+          <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:36px;">
+        </div>
+        <h1 style="font-size: 2rem; margin-bottom: 8px;">Kreye yon kont</h1>
+        <p style="font-size: 0.95rem;">Chwazi fason ou vle itilize KOURI epi kòmanse nan 1 minit.</p>
+      </div>
+
+      <div class="card" style="box-shadow: var(--shadow-md);">
+        <form id="register-form">
+          <!-- Role Selector -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 20px;">
+            <label style="cursor:pointer;">
+              <input type="radio" name="role" value="rider" checked style="display:none;" id="role-rider">
+              <div id="box-role-rider" class="card" style="padding:14px; border:2px solid var(--ink); text-align:center;">
+                <i data-lucide="user" style="width:24px; height:24px; margin-bottom:4px; color:var(--ink);"></i>
+                <div style="font-weight:700; font-size:0.9rem;">Pasaje</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Mwen vle kous</div>
+              </div>
+            </label>
+            <label style="cursor:pointer;">
+              <input type="radio" name="role" value="driver" style="display:none;" id="role-driver">
+              <div id="box-role-driver" class="card" style="padding:14px; border:1px solid var(--border); text-align:center;">
+                <i data-lucide="car" style="width:24px; height:24px; margin-bottom:4px; color:var(--text-muted);"></i>
+                <div style="font-weight:700; font-size:0.9rem;">Chofè</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">Mwen vle kondwi</div>
+              </div>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Non ak Siyati konplè</label>
+            <div class="input-with-icon">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="reg-name" class="form-input" placeholder="Eg: Jean-Baptiste Delva" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-phone">Nimewo Telefòn (Digicel / Natcom)</label>
+            <div class="input-with-icon">
+              <i data-lucide="phone" class="input-icon"></i>
+              <input type="tel" id="reg-phone" class="form-input" placeholder="+509 3712-3456" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Adrès Imèl</label>
+            <div class="input-with-icon">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="reg-email" class="form-input" placeholder="ou@egzanp.ht" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Kreye yon Modpas sekirize</label>
+            <div class="input-with-icon">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="reg-password" class="form-input" placeholder="Omwen 8 karaktè" minlength="8" required>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-reg" class="btn btn-primary btn-block btn-lg" style="margin-top: 12px;">
+            <i data-lucide="user-plus"></i>
+            <span>Enskri sou KOURI</span>
+          </button>
+        </form>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); text-align:center; font-size:0.9rem;">
+          <span style="color:var(--text-muted);">Ou gen yon kont deja?</span>
+          <a href="/login.html" style="font-weight:700; color:var(--ink); margin-left:6px;">Konekte</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="text-align:center;">
+      <div class="footer-credit" data-i18n="designed_by">Designed by Cvisual</div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/offline/db.js"></script>
+  <script src="/assets/js/offline/outbox.js"></script>
+  <script src="/assets/js/offline/sync.js"></script>
+  <script src="/assets/js/whatsapp-client.js"></script>
+
+  <script>
+    // Role selection styling
+    const roleRider = document.getElementById('role-rider');
+    const roleDriver = document.getElementById('role-driver');
+    const boxRider = document.getElementById('box-role-rider');
+    const boxDriver = document.getElementById('box-role-driver');
+
+    // Check query params if preset
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('role') === 'driver') {
+      roleDriver.checked = true;
+      updateRoleStyles('driver');
+    }
+
+    function updateRoleStyles(selected) {
+      if (selected === 'driver') {
+        boxDriver.style.border = '2px solid var(--ink)';
+        boxDriver.querySelector('i').style.color = 'var(--ink)';
+        boxRider.style.border = '1px solid var(--border)';
+        boxRider.querySelector('i').style.color = 'var(--text-muted)';
+      } else {
+        boxRider.style.border = '2px solid var(--ink)';
+        boxRider.querySelector('i').style.color = 'var(--ink)';
+        boxDriver.style.border = '1px solid var(--border)';
+        boxDriver.querySelector('i').style.color = 'var(--text-muted)';
+      }
+    }
+
+    roleRider.addEventListener('change', () => updateRoleStyles('rider'));
+    roleDriver.addEventListener('change', () => updateRoleStyles('driver'));
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const role = document.querySelector('input[name="role"]:checked').value;
+      const full_name = document.getElementById('reg-name').value;
+      const phone = document.getElementById('reg-phone').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const btn = document.getElementById('btn-submit-reg');
+
+      try {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="skeleton-text" style="width:80px; height:18px;"></span>`;
+        await window.authService.signUp(email, password, { full_name, phone, role });
+
+        // Trigger automatic WhatsApp Welcome notification (Fast Lane)
+        if (window.whatsappClient && phone) {
+          window.whatsappClient.notifyWelcome({ phone, full_name });
+        }
+      } catch (err) {
+        showToast('error', 'Erè Enskripsyon', err.message || 'Tanpri eseye ankò.');
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="user-plus"></i> <span>Enskri sou KOURI</span>`;
+        if (window.lucide) window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Kòd Promo & Pwomosyon">
+  <title>Kòd Promo — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; margin-bottom:4px;">Kòd Rabè & Pwogram Parenaj</h2>
+            <p style="font-size:0.875rem;">Kreye kòd pwomosyon pou atire nouvo pasaje epi rekonpanse rekòmandasyon.</p>
+          </div>
+          <button type="button" class="btn btn-primary btn-md btn-pill" onclick="prompt('Nouvo Kòd Promo:') && showToast('success', 'Kòd Kreye', 'Kòd la aktif pou pasaje yo.')">
+            <i data-lucide="plus"></i> Kreye Kòd Promo
+          </button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Kòd</th>
+                <th>Rabè %</th>
+                <th>Limit Maksimòm</th>
+                <th>Limit Itilizasyon</th>
+                <th>Itilizasyon Aktyèl</th>
+                <th>Dat Limit</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Kòd"><code style="font-size:1rem; font-weight:800; color:var(--ink);">BIENVENUE</code></td>
+                <td data-label="Rabè">20% Rabè</td>
+                <td data-label="Max">Max 300 HTG</td>
+                <td data-label="Limit">500 moun</td>
+                <td data-label="Itilize">142 fwa</td>
+                <td data-label="Dat">Fevriye 2027</td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-danger btn-sm" onclick="showToast('info', 'Dezaktive', 'Kòd la dezaktive.')">Dezaktive</button>
+                </td>
+              </tr>
+
+              <tr>
+                <td data-label="Kòd"><code style="font-size:1rem; font-weight:800; color:var(--ink);">KOURI2026</code></td>
+                <td data-label="Rabè">15% Rabè</td>
+                <td data-label="Max">Max 200 HTG</td>
+                <td data-label="Limit">1000 moun</td>
+                <td data-label="Itilize">410 fwa</td>
+                <td data-label="Dat">Me 2027</td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-danger btn-sm">Dezaktive</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+</body>
+</html>

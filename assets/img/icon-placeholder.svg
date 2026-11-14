@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+  <rect width="128" height="128" rx="32" fill="#0B0F1A"/>
+  <!-- Directional arrow -->
+  <path d="M34 84L54 36H78L60 64H82L44 94L50 72H34Z" fill="#2563EB"/>
+  <!-- Plus Badge -->
+  <g transform="translate(76, 76)">
+    <rect width="42" height="42" rx="12" fill="#2563EB"/>
+    <path d="M21 12V30M12 21H30" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+</svg>

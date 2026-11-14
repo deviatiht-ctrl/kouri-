@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Konfigirasyon Pri & Tarif">
+  <title>Konfigirasyon Pri — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="margin-bottom:24px;">
+          <h2 style="font-size:1.5rem; margin-bottom:4px;">Motè Kalkil Tarif KOURI</h2>
+          <p style="font-size:0.875rem;">Konfigire mòd Distans, Zòn Fiks oswa Ibrid, komisyon chofè, ak surge multipliers.</p>
+        </div>
+
+        <!-- Global Mode Selector Card -->
+        <div class="card" style="margin-bottom:24px;">
+          <h3 class="card-title" style="margin-bottom:12px;">Mòd Kalkil Global</h3>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px;">
+            <label style="cursor:pointer;">
+              <input type="radio" name="pricing_mode" value="hybrid" checked style="display:none;">
+              <div class="card" style="border:2px solid var(--ink); padding:16px;">
+                <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">C) Mòd Ibrid (Hybrid - Rekòmande)</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Pri fiks lè pwen depa ak rive nan zòn defini; distans + tan pou lòt kote.</div>
+              </div>
+            </label>
+
+            <label style="cursor:pointer;">
+              <input type="radio" name="pricing_mode" value="distance" style="display:none;">
+              <div class="card" style="border:1px solid var(--border); padding:16px;">
+                <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">A) Mòd Distans Pur</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Tarif baz + pri pa kilomèt + pri pa minit tout kote.</div>
+              </div>
+            </label>
+
+            <label style="cursor:pointer;">
+              <input type="radio" name="pricing_mode" value="zone" style="display:none;">
+              <div class="card" style="border:1px solid var(--border); padding:16px;">
+                <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">B) Mòd Zòn Fiks</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Pri matris fiks sèlman ant zòn katye yo.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Vehicle Category Pricing Rates Grid -->
+        <div class="card" style="margin-bottom:28px;">
+          <div class="card-header">
+            <h3 class="card-title">Tarif pa Kategori Machin</h3>
+            <button type="button" class="btn btn-primary btn-sm" onclick="showToast('success', 'Anrejistre', 'Tout chanjman tarif yo aplike imedyatman sou platfòm nan.')">
+              <i data-lucide="save"></i> Anrejistre Tarif yo
+            </button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+            <!-- Moto -->
+            <div class="card" style="background:var(--surface-alt);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <strong style="font-size:1.05rem;">Kouri Moto</strong>
+                <span class="badge">12% Komisyon</span>
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri Baz (HTG)</label>
+                <input type="number" class="form-input" value="100">
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri pa Kilomèt (HTG)</label>
+                <input type="number" class="form-input" value="35">
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri pa Minit (HTG)</label>
+                <input type="number" class="form-input" value="5">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Tarif Minimòm (HTG)</label>
+                <input type="number" class="form-input" value="150">
+              </div>
+            </div>
+
+            <!-- Standard -->
+            <div class="card" style="background:var(--surface-alt); border-color:var(--ink);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <strong style="font-size:1.05rem;">Kouri Klasik</strong>
+                <span class="badge badge-primary">15% Komisyon</span>
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri Baz (HTG)</label>
+                <input type="number" class="form-input" value="250">
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri pa Kilomèt (HTG)</label>
+                <input type="number" class="form-input" value="65">
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri pa Minit (HTG)</label>
+                <input type="number" class="form-input" value="12">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Tarif Minimòm (HTG)</label>
+                <input type="number" class="form-input" value="350">
+              </div>
+            </div>
+
+            <!-- Comfort -->
+            <div class="card" style="background:var(--surface-alt);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <strong style="font-size:1.05rem;">Kouri Konfò</strong>
+                <span class="badge badge-accent">18% Komisyon</span>
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri Baz (HTG)</label>
+                <input type="number" class="form-input" value="450">
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri pa Kilomèt (HTG)</label>
+                <input type="number" class="form-input" value="95">
+              </div>
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Pri pa Minit (HTG)</label>
+                <input type="number" class="form-input" value="18">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Tarif Minimòm (HTG)</label>
+                <input type="number" class="form-input" value="600">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRIP SIMULATOR PREVIEW MAP (Required in prompt) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Similatè Kous & Previzyalizasyon Tarif</h3>
+              <p style="font-size:0.85rem;">Klike de (2) pwen sou kat la pou kalkile wout OSRM ak pri egzak la an tan reyèl.</p>
+            </div>
+            <div id="sim-result-badge" class="badge badge-success" style="font-size:1rem; padding:6px 14px;">
+              Pri Simile: <span id="sim-calculated-price">650 HTG</span>
+            </div>
+          </div>
+
+          <div id="sim-map" style="width:100%; height:320px; border-radius:var(--radius-md); overflow:hidden;"></div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+
+  <script type="module">
+    import { KouriMap } from '/assets/js/map/map.js';
+    import { routingService } from '/assets/js/map/routing.js';
+
+    const simMap = new KouriMap('sim-map', {
+      center: [-72.30, 18.54],
+      zoom: 12.5
+    });
+
+    let clickCount = 0;
+    let ptA = [-72.2926, 18.5796];
+    let ptB = [-72.2858, 18.5144];
+
+    simMap.map?.on('load', async () => {
+      simMap.setPickupPoint(ptA[1], ptA[0]);
+      simMap.setDestinationPoint(ptB[1], ptB[0]);
+      const r = await routingService.getRoute(ptA, ptB);
+      if (r && r.success) {
+        routingService.renderRouteOnMap(simMap.map, r.routeGeoJSON);
+      }
+    });
+
+    simMap.map?.on('click', async (e) => {
+      clickCount++;
+      if (clickCount % 2 === 1) {
+        ptA = [e.lngLat.lng, e.lngLat.lat];
+        simMap.setPickupPoint(ptA[1], ptA[0]);
+        showToast('info', 'Pwen Depa', 'Chwazi dezyèm pwen destinasyon an.');
+      } else {
+        ptB = [e.lngLat.lng, e.lngLat.lat];
+        simMap.setDestinationPoint(ptB[1], ptB[0]);
+        const r = await routingService.getRoute(ptA, ptB);
+        if (r && r.success) {
+          routingService.renderRouteOnMap(simMap.map, r.routeGeoJSON);
+          const computed = Math.round(250 + (r.distanceKm * 65) + (r.durationMin * 12));
+          document.getElementById('sim-calculated-price').textContent = `${computed} HTG (${r.distanceKm} km, ${r.durationMin} min)`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

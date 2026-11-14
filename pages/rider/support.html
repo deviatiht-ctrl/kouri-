@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Sipò ak Asistans — KOURI</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container container-narrow">
+      
+      <div style="margin-bottom: 24px;">
+        <div class="badge badge-primary" style="margin-bottom: 8px;">Asistans 24/7</div>
+        <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Sant Sipò KOURI</h1>
+        <p>Nou la pou reponn nenpòt kesyon oswa rezoud nenpòt pwoblèm ou rankontre sou yon kous.</p>
+      </div>
+
+      <!-- Quick Issue Reporting -->
+      <div class="card" style="margin-bottom: 28px;">
+        <h3 style="font-size: 1.2rem; margin-bottom: 12px;">Siyale yon pwoblèm sou yon kous</h3>
+        <form id="support-ticket-form">
+          <div class="form-group">
+            <label class="form-label">Sijè pwoblèm nan</label>
+            <select class="form-select" id="ticket-subject">
+              <option value="item_lost">Mwen bliye yon objè nan machin nan</option>
+              <option value="fare_dispute">Diskisyon sou pri kous la</option>
+              <option value="driver_behavior">Konpòtman chofè a</option>
+              <option value="offline_sync">Kous mwen pa t senkronize byen</option>
+              <option value="other">Lòt kesyon oswa demand</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Kous konsène</label>
+            <select class="form-select" id="ticket-ride">
+              <option value="recent_1">14 Novanm 2026 - Aéroport rive Pétion-Ville (650 HTG)</option>
+              <option value="recent_2">11 Novanm 2026 - Delmas 48 (250 HTG)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Eksplike sitiyasyon an an detay</label>
+            <textarea class="form-textarea" rows="4" id="ticket-message" placeholder="Tanpri dekri kisa k te pase pou ekip nou an ka ede w rapidman..." required></textarea>
+          </div>
+
+          <button type="submit" id="btn-submit-ticket" class="btn btn-primary btn-block btn-lg">
+            <i data-lucide="send"></i> Voye Demann bay Sipò
+          </button>
+        </form>
+      </div>
+
+      <!-- FAQ Section -->
+      <div>
+        <h2 style="font-size: 1.3rem; margin-bottom: 16px;">Kesyon Moun Poze Souvan (FAQ)</h2>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="card">
+            <h4 style="font-size: 1rem; margin-bottom: 6px;">Kouman Mòd San Entènèt la fonksyone?</h4>
+            <p style="font-size: 0.875rem;">Depi chofè a aksepte kous la epi li antre kòd sekirite 6 chif ou an, tout wout la ak pri fiks la anrejistre lokalman nan telefòn ou. Menm si done mobil ou fini oswa rezo tonbe nan wout la, kous la ap kontinye kalkile distans lan epi konfime san pwoblèm.</p>
+          </div>
+
+          <div class="card">
+            <h4 style="font-size: 1rem; margin-bottom: 6px;">Ki jan pou m peye ak MonCash oswa NatCash?</h4>
+            <p style="font-size: 0.875rem;">Ou ka chwazi MonCash oswa NatCash dirèkteman kòm mwayen peman lè w ap kòmande kous la, oswa ou ka rechaje Bous KOURI ou an davans nan seksyon Bous la.</p>
+          </div>
+
+          <div class="card">
+            <h4 style="font-size: 1rem; margin-bottom: 6px;">Ki jan abònman ak chofè dedye a fonksyone?</h4>
+            <p style="font-size: 0.875rem;">Lè w pran yon abònman "Wout Travay" oswa "Kouri VIP", administrasyon KOURI asiyen yon chofè serye pou ou selon orè ou bezwen an. Chak maten oswa aprèmidi, se chofè sa a ki vin pran w an priyorite.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+
+  <script>
+    document.getElementById('support-ticket-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-ticket');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="skeleton-text" style="width:100px; height:18px;"></span>`;
+
+      setTimeout(() => {
+        showToast('success', 'Tikè Louvri!', 'Ekip sipò KOURI resevwa mesaj ou a. N ap reponn ou sou WhatsApp oswa pa imèl.');
+        document.getElementById('ticket-message').value = '';
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send"></i> Voye Demann bay Sipò`;
+        if (window.lucide) window.lucide.createIcons();
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

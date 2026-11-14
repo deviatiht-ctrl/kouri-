@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Plan Abònman & Asiyasyon Chofè">
+  <title>Abònman — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; margin-bottom:4px;">Jesyon Abònman & Asiyasyon Chofè Dedye</h2>
+            <p style="font-size:0.875rem;">Kreye fòmil abònman ak asiyen chofè patnè bay abòne regilye yo.</p>
+          </div>
+          <button type="button" class="btn btn-primary btn-md btn-pill" id="btn-create-plan">
+            <i data-lucide="plus"></i> Kreye Nouvo Plan
+          </button>
+        </div>
+
+        <!-- Active Subscriptions with Driver Assignment Tool -->
+        <div class="data-table-container">
+          <div class="table-toolbar">
+            <h3 class="card-title">Abòne Aktif & Chofè Asiyen</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pasaje</th>
+                <th>Plan</th>
+                <th>Kous Itilize</th>
+                <th>Chofè Dedye Asiyen</th>
+                <th>Orè Disponiblite</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Pasaje">
+                  <strong>Jean-Baptiste Delva</strong>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">+509 3712-3456</div>
+                </td>
+                <td data-label="Plan"><span class="badge badge-primary">Wout Travay</span></td>
+                <td data-label="Kous">6 / 20 kous</td>
+                <td data-label="Chofè">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" alt="Chofè">
+                    <span><strong>Mackenzy Pierre</strong> (AA-12345)</span>
+                  </div>
+                </td>
+                <td data-label="Orè">07:30 - 18:00 (Lendi-Vandredi)</td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="prompt('Chwazi nouvo ID Chofè pou re-asiyen:') && showToast('success', 'Chofè Asiyen', 'Nouvo chofè a asiyen ak pasaje sa a.')">
+                    <i data-lucide="user-check"></i> Chanje Chofè
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td data-label="Pasaje">
+                  <strong>Valérie Lamothe</strong>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">+509 3800-1122</div>
+                </td>
+                <td data-label="Plan"><span class="badge badge-accent">Pake Lekòl</span></td>
+                <td data-label="Kous">4 / 10 kous</td>
+                <td data-label="Chofè">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" alt="Chofè">
+                    <span><strong>Ronald Augustin</strong> (BB-99214)</span>
+                  </div>
+                </td>
+                <td data-label="Orè">07:15 & 13:30 (Maten/Apremidi)</td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm">Chanje Chofè</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Subscription Plans Builder / Cards -->
+        <div style="margin-top:28px;">
+          <h3 class="card-title" style="margin-bottom:16px;">Fòmil Plan ki Disponib nan Sistèm nan</h3>
+          
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+            <div class="card">
+              <div class="card-header">
+                <h4 style="font-size:1.15rem;">Abònman Wout Travay</h4>
+                <strong data-money-htg="12500">12,500 HTG</strong>
+              </div>
+              <p style="font-size:0.85rem; margin-bottom:12px;">20 kous pa mwa ant kay ak travay. Chofè dedye asiyen.</p>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+                Tip: Kous enkli (20) • Dire: 1 Mwa • Kategori: Klasik
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn btn-outline btn-sm">Edite Plan</button>
+                <span class="badge badge-success" style="margin-left:auto;">Aktif</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h4 style="font-size:1.15rem;">Kouri Biznis VIP San Limit</h4>
+                <strong data-money-htg="35000">35,000 HTG</strong>
+              </div>
+              <p style="font-size:0.85rem; margin-bottom:12px;">Kous san limit nan zòn Petyonvil, Dèlma ak Taba. Asiyasyon priyoritè.</p>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+                Tip: San limit nan zòn • Dire: 1 Mwa • Kategori: Konfò
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn btn-outline btn-sm">Edite Plan</button>
+                <span class="badge badge-success" style="margin-left:auto;">Aktif</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+
+  <script>
+    document.getElementById('btn-create-plan')?.addEventListener('click', () => {
+      const name = prompt('Non nouvo fòmil plan an:');
+      if (name) {
+        showToast('success', 'Plan Kreye', `Plan "${name}" anrejistre kòm nouvo opsyon abònman.`);
+      }
+    });
+  </script>
+</body>
+</html>

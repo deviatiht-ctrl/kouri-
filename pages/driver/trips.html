@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Istorik Kous — KOURI Chofè</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container">
+      
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <div class="badge badge-primary" style="margin-bottom:8px;">Aktivite Chofè</div>
+          <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Istorik Kous Ou yo</h1>
+          <p>Detay sou tout kous ou te kondwi, distans, ak revni nèt ou.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div style="font-weight:700; font-size:1.05rem;">Aéroport Mais Gâté → Place Saint-Pierre, Pétion-Ville</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">14 Novanm 2026, 14:15 • Jean-Baptiste Delva • Kouri Klasik</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:1.15rem; color:var(--success);" data-money-htg="552.5">552.50 HTG</div>
+              <span class="badge badge-success">Peye (Kach)</span>
+            </div>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); border-top:1px solid var(--border); padding-top:10px; margin-top:8px;">
+            Distans: 8.4 km • Dire: 22 min • Kòd PIN Kliyan: 582914
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div style="font-weight:700; font-size:1.05rem;">Delmas 33 → Boulevard 15 Octobre, Tabarre</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">14 Novanm 2026, 11:20 • Marie Claire • Kouri Klasik</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:1.15rem; color:var(--success);" data-money-htg="425">425.00 HTG</div>
+              <span class="badge badge-success">Peye (MonCash)</span>
+            </div>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); border-top:1px solid var(--border); padding-top:10px; margin-top:8px;">
+            Distans: 4.1 km • Dire: 14 min • Kòd PIN Kliyan: 104822
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+</body>
+</html>

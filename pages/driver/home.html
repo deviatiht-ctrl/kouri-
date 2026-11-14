@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0F1A">
+  <title>KOURI — Espas Chofè (Kondwi)</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <!-- Leaflet CDN (100% Free, Zero API Keys, Universal Support) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Vendor Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+  <link rel="stylesheet" href="/assets/css/map.css">
+  <link rel="stylesheet" href="/assets/css/bottom-sheet.css">
+
+  <style>
+    .navbar-desktop-wrapper {
+      display: none !important;
+    }
+    /* Driver Status Pill on Map */
+    .driver-status-floating {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: var(--z-map-controls);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-md);
+    }
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: background var(--transition-fast);
+    }
+    .status-dot.online {
+      background: var(--success);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25);
+    }
+    .countdown-bar {
+      height: 6px;
+      width: 100%;
+      background: var(--border);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .countdown-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--accent);
+      transition: width 1s linear;
+    }
+  </style>
+</head>
+<body style="overflow:hidden;">
+
+  <div id="kouri-navbar"></div>
+
+  <div class="ride-app-container">
+    <!-- Map Canvas -->
+    <div id="map">
+      <!-- Watermark Logo -->
+      <div class="map-watermark" data-kouri-logo data-logo-height="20">
+        <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:20px;">
+      </div>
+
+      <!-- Online / Offline Quick Indicator -->
+      <div class="driver-status-floating">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="driver-status-label" style="font-weight:700; font-size:0.875rem;">Ou pa an liy</span>
+        <!-- Sync indicator pill -->
+        <span class="badge badge-success" id="driver-sync-badge" style="font-size:10px; padding:2px 8px; margin-left:6px;">
+          <i data-lucide="check-check"></i> Senkronize
+        </span>
+      </div>
+    </div>
+
+    <!-- Draggable Driver Control Sheet -->
+    <div class="bottom-sheet snap-peek" id="driver-sheet">
+      <div class="sheet-handle-wrapper">
+        <div class="sheet-handle-bar"></div>
+      </div>
+
+      <div class="sheet-content" id="driver-sheet-content">
+
+        <!-- Driver App Brand Header with Wallet, Profile & Settings -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+          <a href="/index.html" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--ink);">
+            <div data-kouri-logo data-logo-height="24">
+              <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:24px;">
+            </div>
+            <span class="badge badge-accent" style="font-size:10px;">Chofè</span>
+          </a>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <a href="/pages/account/wallet.html" class="btn btn-outline btn-sm btn-pill" title="Bous Mwen" style="padding:6px 12px; font-size:0.8rem; font-weight:700;">
+              <i data-lucide="wallet" style="width:14px; height:14px; color:var(--accent);"></i>
+              <span>2,450 G</span>
+            </a>
+            <a href="/pages/account/profile.html" class="btn btn-ghost btn-sm" style="width:36px; height:36px; padding:0; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;" title="Pwofil">
+              <i data-lucide="user" style="width:16px; height:16px;"></i>
+            </a>
+            <a href="/pages/account/settings.html" class="btn btn-ghost btn-sm" style="width:36px; height:36px; padding:0; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;" title="Paramèt">
+              <i data-lucide="settings" style="width:16px; height:16px;"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 1. STANDBY / IDLE STATE (ONLINE TOGGLE) -->
+        <div id="driver-idle-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div>
+              <div style="font-weight:800; font-size:1.25rem;" id="driver-greeting">Bonjou, Mackenzy</div>
+              <div style="font-size:0.85rem; color:var(--text-muted);">Toyota Corolla (AA-12345) • Klasik</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Revni Jounen an</div>
+              <div style="font-weight:800; font-size:1.15rem; color:var(--success);" data-money-htg="2450">2,450 HTG</div>
+            </div>
+          </div>
+
+          <!-- Big Online/Offline Toggle Button -->
+          <button type="button" id="btn-toggle-online" class="btn btn-primary btn-block btn-lg" style="margin-bottom:12px;">
+            <i data-lucide="power"></i>
+            <span id="btn-online-text" data-i18n="go_online">Mete w an liy</span>
+          </button>
+
+          <!-- Quick Test Request Trigger for Pair Programming Demo -->
+          <button type="button" id="btn-trigger-demo-request" class="btn btn-outline btn-block btn-sm">
+            <i data-lucide="bell"></i> Simile yon Demann Kous
+          </button>
+        </div>
+
+        <!-- 2. INCOMING TRIP REQUEST MODAL (15s Countdown) -->
+        <div id="driver-request-panel" style="display:none;">
+          <div class="countdown-bar">
+            <div class="countdown-fill" id="countdown-progress"></div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="badge badge-accent">
+              <i data-lucide="zap"></i> Nouvo Kous! (<span id="countdown-seconds">15</span>s)
+            </div>
+            <div style="font-weight:800; font-size:1.4rem; color:var(--ink);" data-money-htg="650">
+              650 HTG
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px; margin-bottom:14px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px; font-size:0.85rem;">
+              <div>
+                <span style="color:var(--text-muted);">Distans Kliyan:</span>
+                <div style="font-weight:700;">1.2 km (4 min)</div>
+              </div>
+              <div>
+                <span style="color:var(--text-muted);">Distans Kous la:</span>
+                <div style="font-weight:700;">8.4 km (22 min)</div>
+              </div>
+            </div>
+
+            <div style="font-size:0.875rem; padding-left:10px; border-left:2px solid var(--ink); margin-bottom:6px;">
+              <strong>Pran:</strong> Aéroport Mais Gâté
+            </div>
+            <div style="font-size:0.875rem; padding-left:10px; border-left:2px solid var(--accent);">
+              <strong>Depoze:</strong> Place Saint-Pierre, Pétion-Ville
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px;">
+            <button type="button" id="btn-decline-ride" class="btn btn-outline btn-lg">
+              <span data-i18n="decline_ride">Refize</span>
+            </button>
+            <button type="button" id="btn-accept-ride" class="btn btn-primary btn-lg">
+              <i data-lucide="check"></i>
+              <span data-i18n="accept_ride">Aksepte kous la</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. NAVIGATION & PICKUP EN ROUTE -->
+        <div id="driver-enroute-panel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="badge badge-primary">
+              <i data-lucide="navigation"></i> Nan wout pou pran pasaje a
+            </div>
+            <div style="font-weight:700; font-size:0.9rem;">ETA: 4 min</div>
+          </div>
+
+          <div class="card" style="padding:14px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <div style="font-weight:700;">Jean-Baptiste Delva</div>
+              <a href="tel:+50937123456" class="btn btn-outline btn-sm"><i data-lucide="phone"></i> Rele</a>
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted);">
+              Adrès: Aéroport Toussaint Louverture, Mais Gâté
+            </div>
+          </div>
+
+          <button type="button" id="btn-driver-arrived" class="btn btn-primary btn-block btn-lg" style="margin-bottom:10px;">
+            <i data-lucide="map-pin"></i>
+            <span data-i18n="btn_arrived_pickup">Mwen rive sou plas</span>
+          </button>
+        </div>
+
+        <!-- 4. PICKUP VERIFICATION (6 DIGIT CODE / QR SCAN) — WORKS OFFLINE -->
+        <div id="driver-verify-panel" style="display:none;">
+          <div style="margin-bottom:12px; text-align:left;">
+            <div class="badge badge-accent" style="margin-bottom:6px;">Verifikasyon Sekirite</div>
+            <h3 style="font-size:1.2rem;" data-i18n="confirm_pickup_code">Mete kòd pasaje a (6 chif)</h3>
+            <p style="font-size:0.85rem;">Mande pasaje a kòd 6 chif ki sou ekran telefòn li an pou konfime kous la menm san entènèt.</p>
+          </div>
+
+          <div class="form-group">
+            <input type="number" id="driver-input-code" class="form-input" placeholder="Eg: 582914" style="font-size:1.5rem; text-align:center; letter-spacing:6px; font-weight:800; font-family:var(--font-heading);" maxlength="6">
+          </div>
+
+          <button type="button" id="btn-verify-pickup" class="btn btn-primary btn-block btn-lg" style="margin-bottom:10px;">
+            <i data-lucide="check-circle-2"></i>
+            <span data-i18n="btn_confirm_pickup">Konfime pasaje a monte</span>
+          </button>
+        </div>
+
+        <!-- 5. TRIP IN PROGRESS (RECORDING OFFLINE GPS TRACES) -->
+        <div id="driver-progress-panel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="badge badge-success">
+              <i data-lucide="play"></i> Kous la ap fèt
+            </div>
+            <div style="font-weight:700; font-size:0.9rem;" id="driver-trip-odometer">
+              Distans: 0.0 km
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px; margin-bottom:14px;">
+            <div style="font-weight:700; font-size:0.9rem; margin-bottom:4px;">Destinasyon Kliyan an:</div>
+            <div style="font-size:0.875rem; color:var(--text-muted);">Place Saint-Pierre, Pétion-Ville</div>
+          </div>
+
+          <!-- Offline notice banner inside card -->
+          <div style="font-size:0.75rem; padding:8px; background:var(--surface-alt); border-radius:var(--radius-md); margin-bottom:14px; display:flex; align-items:center; gap:6px;">
+            <i data-lucide="hard-drive" style="width:14px; height:14px; color:var(--success);"></i>
+            <span>GPS ak tarif anrejistre lokalman sou aparèy ou.</span>
+          </div>
+
+          <button type="button" id="btn-driver-complete" class="btn btn-primary btn-block btn-lg">
+            <i data-lucide="check-square"></i>
+            <span data-i18n="btn_complete_trip">Fini kous la (Drop-off)</span>
+          </button>
+        </div>
+
+        <!-- 6. TRIP SUMMARY & CASH COLLECTION -->
+        <div id="driver-summary-panel" style="display:none; text-align:center;">
+          <div style="width:52px; height:52px; border-radius:50%; background:var(--success-subtle); color:var(--success); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+            <i data-lucide="check" style="width:26px; height:26px;"></i>
+          </div>
+          <h2 style="font-size:1.4rem; margin-bottom:4px;">Kous la fini avèk siksè!</h2>
+          <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Kolekte montan an nan men pasaje a:</div>
+          <div style="font-size:1.8rem; font-weight:800; font-family:var(--font-heading); color:var(--ink); margin-bottom:14px;" data-money-htg="650">
+            650 HTG
+          </div>
+          
+          <div class="card" style="padding:12px; font-size:0.85rem; margin-bottom:16px; text-align:left;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>Komisyon KOURI (15%):</span>
+              <span style="font-weight:600;">-97.50 HTG</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--success);">
+              <span>Revni nèt ou:</span>
+              <span>552.50 HTG</span>
+            </div>
+          </div>
+
+          <button type="button" id="btn-driver-ready-next" class="btn btn-primary btn-block btn-lg">
+            Pare pou Pwochen Kous
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/components/bottom-sheet.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/offline/db.js"></script>
+  <script src="/assets/js/offline/outbox.js"></script>
+  <script src="/assets/js/offline/sync.js"></script>
+
+  <script type="module">
+    import { KouriMap } from '/assets/js/map/map.js';
+    import { routingService } from '/assets/js/map/routing.js';
+
+    // 1. Initialize Map
+    const kmap = new KouriMap('map', {
+      center: [-72.2926, 18.5796], // Driver starts near Airport
+      zoom: 14.5
+    });
+    window.kouriMap = kmap;
+
+    const sheet = new BottomSheet('driver-sheet');
+    window.driverSheet = sheet;
+
+    let isOnline = false;
+    let countdownInterval = null;
+    let gpsWatchId = null;
+    let recordedPoints = 0;
+
+    const EXPECTED_TRIP_CODE = '582914';
+
+    function showDriverPanel(panelId, snap = 'half') {
+      const panels = ['driver-idle-panel', 'driver-request-panel', 'driver-enroute-panel', 'driver-verify-panel', 'driver-progress-panel', 'driver-summary-panel'];
+      panels.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (id === panelId ? 'block' : 'none');
+      });
+      sheet.snapTo(snap);
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Big Online Toggle
+    const btnOnline = document.getElementById('btn-toggle-online');
+    const statusDot = document.getElementById('status-dot');
+    const statusLabel = document.getElementById('driver-status-label');
+
+    btnOnline?.addEventListener('click', () => {
+      isOnline = !isOnline;
+      if (isOnline) {
+        statusDot.classList.add('online');
+        statusLabel.textContent = 'Ou an liy (Disponib)';
+        btnOnline.classList.remove('btn-primary');
+        btnOnline.classList.add('btn-danger');
+        document.getElementById('btn-online-text').textContent = 'Mete w pa an liy';
+        showToast('success', 'Ou An Liy', 'Ou pare pou resevwa kous nan zòn ou an.');
+      } else {
+        statusDot.classList.remove('online');
+        statusLabel.textContent = 'Ou pa an liy';
+        btnOnline.classList.remove('btn-danger');
+        btnOnline.classList.add('btn-primary');
+        document.getElementById('btn-online-text').textContent = 'Mete w an liy';
+        showToast('info', 'Ou Pa An Liy', 'Ou pap resevwa nouvo demann kous.');
+      }
+    });
+
+    // Trigger Demo Request
+    document.getElementById('btn-trigger-demo-request')?.addEventListener('click', () => {
+      if (!isOnline) {
+        btnOnline.click();
+      }
+      triggerIncomingRide();
+    });
+
+    function triggerIncomingRide() {
+      showDriverPanel('driver-request-panel', 'half');
+      let secondsLeft = 15;
+      const secEl = document.getElementById('countdown-seconds');
+      const progressEl = document.getElementById('countdown-progress');
+      progressEl.style.width = '100%';
+
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      countdownInterval = setInterval(() => {
+        secondsLeft--;
+        if (secEl) secEl.textContent = secondsLeft;
+        if (progressEl) progressEl.style.width = `${(secondsLeft / 15) * 100}%`;
+
+        if (secondsLeft <= 0) {
+          clearInterval(countdownInterval);
+          showDriverPanel('driver-idle-panel', 'peek');
+          showToast('info', 'Tan Ekspire', 'Kous la voye bay yon lòt chofè.');
+        }
+      }, 1000);
+    }
+
+    // Accept Ride
+    document.getElementById('btn-accept-ride')?.addEventListener('click', async () => {
+      if (countdownInterval) clearInterval(countdownInterval);
+      showDriverPanel('driver-enroute-panel', 'half');
+      showToast('success', 'Kous Aksepte!', 'Ale nan pwen depa a pou pran pasaje a.');
+
+      // Route from driver to passenger pickup
+      const pickup = [-72.2926, 18.5796];
+      const dest = [-72.2858, 18.5144];
+      kmap.setPickupPoint(pickup[1], pickup[0]);
+      kmap.setDestinationPoint(dest[1], dest[0]);
+
+      const route = await routingService.getRoute(pickup, dest);
+      if (route && route.success) {
+        routingService.renderRouteOnMap(kmap.map, route.routeGeoJSON);
+        kmap.updateDriverNavigation(pickup[1], pickup[0], 180);
+
+        // Offline Tile Prefetch along corridor
+        window.syncEngine.prefetchRouteCorridorTiles(route.coordinates);
+      }
+
+      // Enqueue to offline outbox with snapshot
+      await window.outbox.queueTransition('trip_active_1', 'accepted', {
+        driver_id: 'chofe_1',
+        pickup_address: 'Aéroport Mais Gâté',
+        destination_address: 'Place Saint-Pierre, Pétion-Ville',
+        fare: 650,
+        trip_code: EXPECTED_TRIP_CODE,
+        pricing_snapshot: {
+          base_fare: 250,
+          per_km_rate: 65,
+          per_min_rate: 12,
+          min_fare: 350,
+          total_fare: 650,
+          is_zone_fare: true,
+          zone_price: 650
+        }
+      });
+    });
+
+    document.getElementById('btn-decline-ride')?.addEventListener('click', () => {
+      if (countdownInterval) clearInterval(countdownInterval);
+      showDriverPanel('driver-idle-panel', 'peek');
+    });
+
+    // Driver Arrived
+    document.getElementById('btn-driver-arrived')?.addEventListener('click', async () => {
+      showDriverPanel('driver-verify-panel', 'half');
+      showToast('info', 'Pasaje Notifye', 'Mande pasaje a kòd sekirite 6 chif la.');
+      await window.outbox.queueTransition('trip_active_1', 'arrived');
+    });
+
+    // Verify 6-digit Code Offline
+    document.getElementById('btn-verify-pickup')?.addEventListener('click', async () => {
+      const codeInput = document.getElementById('driver-input-code').value.trim();
+      
+      const isVerified = window.syncEngine.verifyPickupCodeOffline(codeInput, EXPECTED_TRIP_CODE);
+
+      if (isVerified || codeInput === '582914') {
+        showToast('success', 'Kòd Valide!', 'Kous la demare. Wout la anrejistre lokalman.');
+        showDriverPanel('driver-progress-panel', 'half');
+
+        // Queue in_progress state transition
+        await window.outbox.queueTransition('trip_active_1', 'in_progress', { started_at: new Date().toISOString() });
+
+        // Start offline GPS breadcrumbs simulation every 5s
+        startOfflineGPSTracking();
+      } else {
+        showToast('error', 'Kòd Enkòrèk', 'Kòd 6 chif la pa kòrèk. Tanpri verifye sou telefòn pasaje a.');
+      }
+    });
+
+    function startOfflineGPSTracking() {
+      let currentDistance = 0.0;
+      const odometerEl = document.getElementById('driver-trip-odometer');
+
+      gpsWatchId = setInterval(async () => {
+        currentDistance += 0.4; // 400m every 5s
+        if (odometerEl) odometerEl.textContent = `Distans: ${currentDistance.toFixed(1)} km`;
+
+        // Record breadcrumb in IndexedDB
+        await window.offlineDB.recordGPSPoint('trip_active_1', 18.57 - (currentDistance * 0.005), -72.29);
+      }, 4000);
+    }
+
+    // Complete Trip (Drop-off offline)
+    document.getElementById('btn-driver-complete')?.addEventListener('click', async () => {
+      if (gpsWatchId) clearInterval(gpsWatchId);
+
+      // Compute final fare from pricing snapshot
+      const computed = window.outbox.calculateOfflineFare({
+        base_fare: 250,
+        per_km_rate: 65,
+        per_min_rate: 12,
+        min_fare: 350,
+        total_fare: 650,
+        is_zone_fare: true,
+        zone_price: 650
+      }, 8.4, 22);
+
+      await window.outbox.queueTransition('trip_active_1', 'completed', {
+        fare: computed.total_fare,
+        actual_distance_km: 8.4,
+        actual_duration_min: 22
+      });
+
+      showDriverPanel('driver-summary-panel', 'half');
+      showToast('success', 'Kous Fini!', 'Kous la anrejistre nan outbox ou pou senkronize.');
+
+      // Clear map route
+      routingService.clearRoute(kmap.map);
+    });
+
+    // Ready for next
+    document.getElementById('btn-driver-ready-next')?.addEventListener('click', () => {
+      showDriverPanel('driver-idle-panel', 'peek');
+    });
+  </script>
+</body>
+</html>

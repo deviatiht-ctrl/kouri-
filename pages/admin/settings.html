@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Paramèt Sistèm & Mak">
+  <title>Paramèt — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="margin-bottom:24px;">
+          <h2 style="font-size:1.5rem; margin-bottom:4px;">Paramèt Global & Jesyon Mak (Branding)</h2>
+          <p style="font-size:0.875rem;">Chanje logo, koulè tèm, règleman operasyonèl ak lis administratè yo.</p>
+        </div>
+
+        <!-- 1. BRANDING & LOGO SYSTEM SECTION (Explicitly required in prompt) -->
+        <div class="card" style="margin-bottom:28px;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Idantite Vizyèl & Logo (Branding)</h3>
+              <p style="font-size:0.85rem;">Tout logo ak koulè ou modifye isit la ap aplike imedyatman sou tout paj platfòm nan.</p>
+            </div>
+            <button type="button" id="btn-save-branding" class="btn btn-primary btn-sm">
+              <i data-lucide="save"></i> Anrejistre Mak
+            </button>
+          </div>
+
+          <form id="branding-form">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px; margin-bottom:20px;">
+              
+              <!-- App Name -->
+              <div class="form-group">
+                <label class="form-label" for="cfg-app-name">Non Platfòm nan</label>
+                <input type="text" class="form-input" id="cfg-app-name" value="KOURI">
+              </div>
+
+              <!-- Primary Color -->
+              <div class="form-group">
+                <label class="form-label" for="cfg-primary-color">Koulè Prensipal (--primary)</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <input type="color" id="cfg-primary-color" value="#0B0F1A" style="width:48px; height:48px; padding:0; border:none; border-radius:var(--radius-sm); cursor:pointer;">
+                  <input type="text" class="form-input" id="cfg-primary-hex" value="#0B0F1A">
+                </div>
+              </div>
+
+              <!-- Accent Color -->
+              <div class="form-group">
+                <label class="form-label" for="cfg-accent-color">Koulè Aksan (--accent)</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <input type="color" id="cfg-accent-color" value="#2563EB" style="width:48px; height:48px; padding:0; border:none; border-radius:var(--radius-sm); cursor:pointer;">
+                  <input type="text" class="form-input" id="cfg-accent-hex" value="#2563EB">
+                </div>
+              </div>
+            </div>
+
+            <!-- Logo Upload Slots -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+              <!-- Full Logo -->
+              <div class="card" style="background:var(--surface-alt); text-align:center;">
+                <div style="font-weight:700; font-size:0.9rem; margin-bottom:8px;">Logo Konplè (Wordmark)</div>
+                <div style="height:60px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;" id="preview-logo-box">
+                  <img src="/assets/img/logo-placeholder.svg" id="preview-logo-img" style="height:36px; max-width:100%;" alt="Logo Preview">
+                </div>
+                <label class="btn btn-outline btn-sm btn-block" style="cursor:pointer;">
+                  <i data-lucide="upload"></i> Telechaje Nouvo Logo
+                  <input type="file" id="input-upload-logo" accept="image/*,.svg" style="display:none;">
+                </label>
+              </div>
+
+              <!-- Icon Only -->
+              <div class="card" style="background:var(--surface-alt); text-align:center;">
+                <div style="font-weight:700; font-size:0.9rem; margin-bottom:8px;">Logo Ikòn (Senbòl)</div>
+                <div style="height:60px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                  <img src="/assets/img/icon-placeholder.svg" id="preview-icon-img" style="height:44px; width:44px;" alt="Icon Preview">
+                </div>
+                <label class="btn btn-outline btn-sm btn-block" style="cursor:pointer;">
+                  <i data-lucide="upload"></i> Telechaje Ikòn
+                  <input type="file" id="input-upload-icon" accept="image/*,.svg" style="display:none;">
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. OPERATIONAL & OFFLINE PARAMETERS -->
+        <div class="card" style="margin-bottom:28px;">
+          <h3 class="card-title" style="margin-bottom:14px;">Paramèt Operasyon & Dispatch</h3>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Radyis Rechèch Chofè (Kilomèt)</label>
+              <input type="number" class="form-input" value="8" step="0.5">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Délai Desizyon Chofè (Segonn)</label>
+              <input type="number" class="form-input" value="15">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">To Komisyon Platfòm (%)</label>
+              <input type="number" class="form-input" value="15" step="1">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Limit Valabilite Kous Offline (Èdtan)</label>
+              <input type="number" class="form-input" value="24">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ADMIN USERS MANAGEMENT (Security Whitelist) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Jesyon Administratè yo (admin_users)</h3>
+              <p style="font-size:0.85rem;">Sèlman imèl ki nan lis sa a ka gen aksè ak espas administrasyon an.</p>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-add-admin">
+              <i data-lucide="user-plus"></i> Ajoute Nouvo Imèl Admin
+            </button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;" id="admin-users-list">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--surface-alt); border-radius:var(--radius-md);">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i data-lucide="shield" style="width:18px; height:18px; color:var(--accent);"></i>
+                <strong>admin@kouri.ht</strong>
+              </div>
+              <span class="badge badge-primary">Super Admin</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--surface-alt); border-radius:var(--radius-md);">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i data-lucide="shield" style="width:18px; height:18px; color:var(--accent);"></i>
+                <strong>cvisual@kouri.ht</strong>
+              </div>
+              <span class="badge badge-accent">Creator Admin</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+
+  <script>
+    // Color picker sync
+    const pColor = document.getElementById('cfg-primary-color');
+    const pHex = document.getElementById('cfg-primary-hex');
+    pColor.addEventListener('input', () => pHex.value = pColor.value);
+    pHex.addEventListener('input', () => pColor.value = pHex.value);
+
+    const aColor = document.getElementById('cfg-accent-color');
+    const aHex = document.getElementById('cfg-accent-hex');
+    aColor.addEventListener('input', () => aHex.value = aColor.value);
+    aHex.addEventListener('input', () => aColor.value = aHex.value);
+
+    // Save branding settings
+    document.getElementById('btn-save-branding')?.addEventListener('click', () => {
+      const branding = {
+        app_name: document.getElementById('cfg-app-name').value,
+        primary_color: pHex.value,
+        accent_color: aHex.value,
+        logo_url: document.getElementById('preview-logo-img').src,
+        icon_url: document.getElementById('preview-icon-img').src
+      };
+
+      // Save locally and apply instantly
+      localStorage.setItem('kouri_branding_settings', JSON.stringify(branding));
+      window.logoManager.applyBranding(branding);
+      showToast('success', 'Mak Enskri!', 'Nouvo koulè ak logo yo aplike sou tout sit la.');
+    });
+
+    // Logo image upload preview
+    document.getElementById('input-upload-logo')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          document.getElementById('preview-logo-img').src = re.target.result;
+          showToast('info', 'Logo Chaje', 'Klike "Anrejistre Mak" pou aplike li toupatou.');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Add admin email
+    document.getElementById('btn-add-admin')?.addEventListener('click', () => {
+      const email = prompt('Antre nouvo imèl admin pou bay aksè:');
+      if (email && email.includes('@')) {
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--surface-alt); border-radius:var(--radius-md);';
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <i data-lucide="shield" style="width:18px; height:18px; color:var(--accent);"></i>
+            <strong>${email}</strong>
+          </div>
+          <span class="badge badge-success">Nouvo Admin</span>
+        `;
+        document.getElementById('admin-users-list').appendChild(item);
+        if (window.lucide) window.lucide.createIcons();
+        showToast('success', 'Admin Ajoute', `Imèl ${email} gen aksè kounye a.`);
+      }
+    });
+  </script>
+</body>
+</html>

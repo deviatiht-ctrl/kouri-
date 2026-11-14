@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0F1A">
+  <title>KOURI + — Transpò rapid, fyab e an sekirite nan Ayiti</title>
+  
+  <!-- Favicon & PWA -->
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/img/icon-placeholder.svg">
+
+  <!-- Google Fonts CDN: Plus Jakarta Sans (Headings & UI) + Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CDN (100% Free, Zero API Keys, Universal Compatibility) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+  <link rel="stylesheet" href="/assets/css/map.css">
+
+  <!-- Vendor CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+
+  <!-- Dynamic Desktop Glassmorphic Navbar -->
+  <div id="kouri-navbar"></div>
+
+  <!-- Hero Section with Interactive Map (Editorial 2-Column Layout) -->
+  <header style="padding-top: clamp(88px, 12vw, 125px); padding-bottom: clamp(40px, 6vw, 70px); background:#FFFFFF;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: clamp(32px, 5vw, 56px); align-items: center;">
+        
+        <!-- Left Column: Editorial Headline & Quick Booking Card -->
+        <div>
+          <h1 style="margin-bottom: 18px; font-size: clamp(2rem, 3.8vw, 3.2rem); line-height: 1.15;" data-i18n="hero_title">
+            Chak deplasman ou vin pi senp, rapid e an sekirite.
+          </h1>
+          <p class="lead" style="margin-bottom: 26px; max-width: 580px;" data-i18n="hero_subtitle">
+            Kòmande yon kous fasilman nan Pòtoprens ak tout Ayiti, oswa rantre kòm chofè patnè pou ogmante revni ou. Fonksyone menm lè pa gen entènèt.
+          </p>
+
+          <!-- Interactive Fast Ride Calculator Card -->
+          <div class="card" style="padding: 20px; border-radius: var(--radius-xl); border: 1.5px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 20px; background: #FFFFFF;">
+            
+            <!-- Pickup & Destination Inputs -->
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+              <div class="form-group" style="margin-bottom: 0; position:relative;">
+                <div class="input-with-icon" style="position:relative;">
+                  <i data-lucide="circle-dot" class="input-icon" style="color:var(--ink);"></i>
+                  <input type="text" id="hero-input-pickup" class="form-input" placeholder="Kote pou pran w lan" value="Aéroport Toussaint Louverture" style="padding-right: 40px;" autocomplete="off">
+                  <button type="button" id="hero-btn-locate" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center;" title="Itilize pozisyon mwen">
+                    <i data-lucide="crosshair" style="width:16px; height:16px;"></i>
+                  </button>
+                </div>
+                <div id="hero-pickup-autocomplete" class="autocomplete-dropdown" style="display:none;"></div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0; position:relative;">
+                <div class="input-with-icon">
+                  <i data-lucide="square" class="input-icon" style="color:var(--accent);"></i>
+                  <input type="text" id="hero-input-destination" class="form-input" placeholder="Destinasyon ou" value="Place Saint-Pierre, Pétion-Ville" autocomplete="off">
+                </div>
+                <div id="hero-dest-autocomplete" class="autocomplete-dropdown" style="display:none;"></div>
+              </div>
+            </div>
+
+            <!-- Vehicle Category Pill Selector -->
+            <div class="hero-categories-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;">
+              <button type="button" class="hero-cat-btn" data-cat="moto" data-base="150" style="padding: 8px 4px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: #FFFFFF; cursor: pointer; text-align: center; transition: all var(--transition-fast);">
+                <div style="display:flex; justify-content:center; margin-bottom:2px;"><i data-lucide="bike" style="width:18px; height:18px; color:var(--ink);"></i></div>
+                <div style="font-size:0.75rem; font-weight:700;">Moto</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">150 G</div>
+              </button>
+
+              <button type="button" class="hero-cat-btn active" data-cat="standard" data-base="350" style="padding: 8px 4px; border-radius: var(--radius-md); border: 1.5px solid var(--ink); background: var(--surface-alt); cursor: pointer; text-align: center; transition: all var(--transition-fast);">
+                <div style="display:flex; justify-content:center; margin-bottom:2px;"><i data-lucide="car" style="width:18px; height:18px; color:var(--accent);"></i></div>
+                <div style="font-size:0.75rem; font-weight:700;">Klasik</div>
+                <div style="font-size:0.7rem; color:var(--ink); font-weight:700;">350 G</div>
+              </button>
+
+              <button type="button" class="hero-cat-btn" data-cat="comfort" data-base="600" style="padding: 8px 4px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: #FFFFFF; cursor: pointer; text-align: center; transition: all var(--transition-fast);">
+                <div style="display:flex; justify-content:center; margin-bottom:2px;"><i data-lucide="sparkles" style="width:18px; height:18px; color:var(--ink);"></i></div>
+                <div style="font-size:0.75rem; font-weight:700;">Konfò</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">600 G</div>
+              </button>
+
+              <button type="button" class="hero-cat-btn" data-cat="van" data-base="1000" style="padding: 8px 4px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: #FFFFFF; cursor: pointer; text-align: center; transition: all var(--transition-fast);">
+                <div style="display:flex; justify-content:center; margin-bottom:2px;"><i data-lucide="truck" style="width:18px; height:18px; color:var(--ink);"></i></div>
+                <div style="font-size:0.75rem; font-weight:700;">Van</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">1,000 G</div>
+              </button>
+            </div>
+
+            <!-- Real-time calculation and CTAs -->
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-top: 10px; border-top: 1px dashed var(--border);">
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Pri Estime</div>
+                <div style="font-size: 1.35rem; font-weight: 800; color: var(--ink); font-family: var(--font-heading);" id="hero-fare-estimate">
+                  350 HTG
+                </div>
+              </div>
+              <div style="text-align: right; font-size: 0.8rem; color: var(--text-muted);">
+                <span id="hero-dist-estimate">8.4 km</span> • <span id="hero-time-estimate">18 min</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button type="button" id="btn-hero-order" class="btn btn-primary btn-lg" style="flex: 1 1 200px;">
+                <i data-lucide="arrow-right"></i>
+                <span data-i18n="btn_book_ride">Kòmande Kous Sa a</span>
+              </button>
+              <a href="/register.html?role=driver" class="btn btn-outline btn-lg">
+                <i data-lucide="car"></i>
+                <span data-i18n="btn_become_driver">Vin Chofè</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Social Proof Fleet Indicator -->
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted);">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);"></div>
+            <span><strong>14 chofè verifye</strong> an liy nan zòn Pòtoprens kounye a</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Interactive Haiti Map Frame -->
+        <div>
+          <div class="hero-map-frame">
+            <div id="hero-map">
+              <!-- Watermark Logo -->
+              <div class="map-watermark" data-kouri-logo data-logo-height="20">
+                <img src="/assets/img/logo-placeholder.svg" alt="KOURI" style="height:20px;">
+              </div>
+            </div>
+
+            <!-- Route ETA Floating Card -->
+            <div class="hero-map-overlay-badge" id="hero-map-badge">
+              <i data-lucide="navigation-2" style="width:14px; height:14px; color:var(--accent);"></i>
+              <span id="hero-map-badge-text">Pòtoprens • Wout an dirèk</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Key Features Grid (Editorial Left-Aligned) -->
+  <section style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background:#FFFFFF;">
+    <div class="container">
+      <div style="max-width: 600px; margin-bottom: 48px;">
+        <div class="badge badge-primary" style="margin-bottom: 12px;">Teknolojie Fyab</div>
+        <h2 data-i18n="features_title">Poukisa chwazi KOURI?</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px;">
+        <div class="card">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--accent-subtle); color: var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom: 20px;">
+            <i data-lucide="wifi-off" style="width: 22px; height: 22px;"></i>
+          </div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 10px;" data-i18n="feature_1_title">Kous san entènèt (Mòd Ofline)</h3>
+          <p data-i18n="feature_1_desc">Depi chofè a pran w, kous la kontinye fonksyone epi konfime menm lè rezo tonbe. Tout done yo senkronize otomatikman pita.</p>
+        </div>
+
+        <div class="card">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--success-subtle); color: var(--success); display:flex; align-items:center; justify-content:center; margin-bottom: 20px;">
+            <i data-lucide="shield-check" style="width: 22px; height: 22px;"></i>
+          </div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 10px;" data-i18n="feature_2_title">Pri Klè & Transparan</h3>
+          <p data-i18n="feature_2_desc">Pa gen sipriz. Pri a fiks oswa kalkile avan ou monte, peyab an Goud, MonCash oswa NatCash dirèkteman.</p>
+        </div>
+
+        <div class="card">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--surface-alt); color: var(--ink); display:flex; align-items:center; justify-content:center; margin-bottom: 20px;">
+            <i data-lucide="calendar" style="width: 22px; height: 22px;"></i>
+          </div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 10px;" data-i18n="feature_3_title">Abònman ak Chofè Dedye</h3>
+          <p data-i18n="feature_3_desc">Fè yon abònman pou wout travay ou oswa lekòl timoun yo ak yon chofè verifye pèsonèlman sou orè fiks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vehicle Categories Showcase -->
+  <section>
+    <div class="container">
+      <div style="max-width: 600px; margin-bottom: 48px;">
+        <div class="badge badge-accent" style="margin-bottom: 12px;">Flòt Nou</div>
+        <h2 data-i18n="pricing_teaser_title">Opsyon machin ki adapte a bezwen ou</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <i data-lucide="bike" style="width:32px; height:32px; color:var(--ink);"></i>
+            <span class="badge">1 Pasaje</span>
+          </div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px;">Kouri Moto</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 16px;">Pi rapid nan anbouteyaj Pòtoprens, ekonomik pou yon sèl moun.</p>
+          <div style="font-size: 1.25rem; font-weight: 800; color:var(--ink); font-family:var(--font-heading);">
+            Apati <span data-money-htg="150">150 HTG</span>
+          </div>
+        </div>
+
+        <div class="card" style="border-color: var(--ink);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <i data-lucide="car" style="width:32px; height:32px; color:var(--accent);"></i>
+            <span class="badge badge-primary">Popilè</span>
+          </div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px;">Kouri Klasik</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 16px;">Sedan 4 plas konfòtab ak èkondisyone pou kous chak jou.</p>
+          <div style="font-size: 1.25rem; font-weight: 800; color:var(--ink); font-family:var(--font-heading);">
+            Apati <span data-money-htg="350">350 HTG</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <i data-lucide="sparkles" style="width:32px; height:32px; color:var(--ink);"></i>
+            <span class="badge">Primyòm</span>
+          </div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px;">Kouri Konfò</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 16px;">SUV oswa machin modèn, chofè ki pi byen note, sèvis VIP.</p>
+          <div style="font-size: 1.25rem; font-weight: 800; color:var(--ink); font-family:var(--font-heading);">
+            Apati <span data-money-htg="600">600 HTG</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <i data-lucide="truck" style="width:32px; height:32px; color:var(--ink);"></i>
+            <span class="badge">7 Pasaje</span>
+          </div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 6px;">Kouri Van</h3>
+          <p style="font-size: 0.9rem; margin-bottom: 16px;">Minivan gwo espas pou fanmi, delegasyon, oswa bagaj ayewopò.</p>
+          <div style="font-size: 1.25rem; font-weight: 800; color:var(--ink); font-family:var(--font-heading);">
+            Apati <span data-money-htg="1000">1000 HTG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety & SOS Section -->
+  <section style="border-top: 1px solid var(--border); background:#FFFFFF;">
+    <div class="container">
+      <div style="max-width: 720px;">
+        <div class="badge badge-danger" style="margin-bottom: 16px;">
+          <i data-lucide="shield" style="width:14px; height:14px;"></i>
+          Sekirite Maksimòm
+        </div>
+        <h2 style="margin-bottom: 20px;" data-i18n="safety_title">Sekirite ou se priyorite absoli nou</h2>
+        <p class="lead" style="margin-bottom: 32px;" data-i18n="safety_desc">
+          Nou konstwi KOURI + ak zouti avanse pou pwoteje ni pasaje ni chofè nan tout sikonstans.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--surface-alt); display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
+              <i data-lucide="key" style="width:18px; height:18px; color:var(--ink);"></i>
+            </div>
+            <div>
+              <h4 style="font-size: 1rem; margin-bottom: 4px;">Kòd Verifikasyon 6 Chif</h4>
+              <p style="font-size: 0.875rem;">Ou resevwa yon kòd PIN ak yon kòd QR; chofè a pa ka kòmanse kous la san konfimasyon w.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--danger-subtle); display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
+              <i data-lucide="alert-octagon" style="width:18px; height:18px; color:var(--danger);"></i>
+            </div>
+            <div>
+              <h4 style="font-size: 1rem; margin-bottom: 4px;">Bouton SOS Dirèk</h4>
+              <p style="font-size: 0.875rem;">Voye kowòdone GPS ou an dirèk bay sant kontwòl nou ak kontak ijans ou an yon sèl klik.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--surface-alt); display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
+              <i data-lucide="share-2" style="width:18px; height:18px; color:var(--ink);"></i>
+            </div>
+            <div>
+              <h4 style="font-size: 1rem; margin-bottom: 4px;">Pataje Wout an Dirèk</h4>
+              <p style="font-size: 0.875rem;">Pataje lyen swivi kous la ak fanmi ou pou yo ka wè kote ou ye toutotan ou nan wout la.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PWA Install Section -->
+  <section id="install-pwa" style="border-top: 1px solid var(--border); background:#FFFFFF;">
+    <div class="container">
+      <div class="card" style="padding: 40px; border-radius: var(--radius-xl); border: 1.5px solid var(--ink);">
+        <div style="max-width: 650px;">
+          <div class="badge badge-primary" style="margin-bottom: 16px;">Aplikasyon Enstale</div>
+          <h2 style="margin-bottom: 16px;" data-i18n="install_pwa_title">Enstale aplikasyon KOURI + sou telefòn ou</h2>
+          <p style="margin-bottom: 28px;" data-i18n="install_pwa_desc">
+            Aksè rapid san pase nan App Store. Travay pi vit, pran mwens espas, epi ouvri menm lè pa gen entènèt.
+          </p>
+          <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <button type="button" id="btn-install-app" class="btn btn-primary btn-lg btn-pill">
+              <i data-lucide="download"></i>
+              <span data-i18n="btn_install">Enstale KOURI +</span>
+            </button>
+            <a href="/login.html" class="btn btn-outline btn-lg btn-pill">
+              <i data-lucide="arrow-right"></i>
+              <span>Ouvri nan Navigatè</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer (Designed by Cvisual) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
+        <div data-kouri-logo data-logo-height="28">
+          <img src="/assets/img/logo-placeholder.svg" alt="KOURI +" style="height:28px;">
+        </div>
+        <div style="display: flex; gap: 20px; font-size: 0.85rem;">
+          <a href="/terms.html" style="color:var(--text-muted);">Kondisyon Itilizasyon</a>
+          <a href="/privacy.html" style="color:var(--text-muted);">Règleman Konfidansyalite</a>
+          <a href="/pages/driver/home.html" style="color:var(--text-muted);">Chofè</a>
+        </div>
+        <div class="footer-credit" data-i18n="designed_by">
+          Designed by Cvisual
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Bar Placeholder -->
+  <div id="kouri-mobile-nav"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+  <script src="/assets/js/offline/db.js"></script>
+  <script src="/assets/js/offline/outbox.js"></script>
+  <script src="/assets/js/offline/sync.js"></script>
+
+  <!-- Hero Map Controller Module -->
+  <script type="module">
+    import { KouriMap } from '/assets/js/map/map.js';
+    import { routingService } from '/assets/js/map/routing.js';
+    import { geocodingService } from '/assets/js/map/geocoding.js';
+
+    let selectedCategory = 'standard';
+    let baseRate = 350;
+    let currentDistanceKm = 8.4;
+    let currentDurationMin = 18;
+
+    let pickupCoord = [-72.2926, 18.5796]; // [lng, lat] Mais Gâté Airport
+    let destCoord = [-72.2858, 18.5144];   // [lng, lat] Place Saint-Pierre, Pétion-Ville
+
+    // 1. Initialize Hero Map
+    const heroMap = new KouriMap('hero-map', {
+      center: [-72.295, 18.545],
+      zoom: 12.6
+    });
+    window.heroKouriMap = heroMap;
+
+    // 2. On Map Ready: Place markers, calculate route, simulate live fleet
+    heroMap.onReady(async (map) => {
+      heroMap.setPickupPoint(pickupCoord[1], pickupCoord[0]);
+      heroMap.setDestinationPoint(destCoord[1], destCoord[0]);
+
+      // Calculate initial route
+      await updateHeroRoute();
+
+      // Fit bounds so route is centered nicely
+      heroMap.fitBounds(pickupCoord, destCoord);
+
+      // Start simulated moving fleet of drivers
+      initSimulatedFleet(heroMap);
+    });
+
+    async function updateHeroRoute() {
+      try {
+        const route = await routingService.getRoute(pickupCoord, destCoord);
+        if (route && route.success) {
+          currentDistanceKm = route.distanceKm;
+          currentDurationMin = route.durationMin;
+
+          // Render polyline
+          routingService.renderRouteOnMap(heroMap.map, route.routeGeoJSON);
+
+          // Update UI
+          document.getElementById('hero-dist-estimate').textContent = `${currentDistanceKm} km`;
+          document.getElementById('hero-time-estimate').textContent = `${currentDurationMin} min`;
+          recalculateHeroFare();
+
+          const badge = document.getElementById('hero-map-badge-text');
+          if (badge) {
+            badge.textContent = `${currentDistanceKm} km • ${currentDurationMin} min • ${calculateFare(selectedCategory, currentDistanceKm)} HTG`;
+          }
+        }
+      } catch (err) {
+        console.debug('Route calculation note:', err);
+      }
+    }
+
+    function calculateFare(cat, distKm) {
+      if (cat === 'moto') return Math.max(150, Math.round(100 + (distKm * 25)));
+      if (cat === 'comfort') return Math.max(600, Math.round(350 + (distKm * 65)));
+      if (cat === 'van') return Math.max(1000, Math.round(500 + (distKm * 90)));
+      // standard klasik default
+      return Math.max(350, Math.round(200 + (distKm * 40)));
+    }
+
+    function recalculateHeroFare() {
+      const fare = calculateFare(selectedCategory, currentDistanceKm);
+      const fareEl = document.getElementById('hero-fare-estimate');
+      if (fareEl) fareEl.textContent = `${fare.toLocaleString()} HTG`;
+    }
+
+    // Category button toggles
+    document.querySelectorAll('.hero-cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.hero-cat-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.borderColor = 'var(--border)';
+          b.style.background = '#FFFFFF';
+        });
+        btn.classList.add('active');
+        btn.style.borderColor = 'var(--ink)';
+        btn.style.background = 'var(--surface-alt)';
+
+        selectedCategory = btn.getAttribute('data-cat') || 'standard';
+        recalculateHeroFare();
+      });
+    });
+
+    // Locate Me for Pickup
+    document.getElementById('hero-btn-locate')?.addEventListener('click', async () => {
+      showToast('info', 'Lokalizasyon', 'Ap chèche pozisyon ou...');
+      try {
+        const pos = await geocodingService.getCurrentPosition();
+        pickupCoord = [pos.lng, pos.lat];
+        heroMap.setPickupPoint(pos.lat, pos.lng);
+        heroMap.setUserLocation(pos.lat, pos.lng);
+
+        const addr = await geocodingService.reverseGeocode(pos.lat, pos.lng);
+        const inputPickup = document.getElementById('hero-input-pickup');
+        if (inputPickup) inputPickup.value = addr;
+
+        await updateHeroRoute();
+        heroMap.fitBounds(pickupCoord, destCoord);
+        showToast('success', 'Pozisyon Jwenn', addr);
+      } catch (err) {
+        showToast('error', 'Lokalizasyon', 'Tanpri otorize aksè GPS nan navigatè w.');
+      }
+    });
+
+    // Autocomplete for Hero Inputs (Photon + Curated Haiti POIs: Restaurants, Schools, etc.)
+    function getCategoryIcon(cat) {
+      if (cat === 'restaurant' || cat === 'cafe' || cat === 'bakery') return 'utensils';
+      if (cat === 'school' || cat === 'university') return 'graduation-cap';
+      if (cat === 'hotel') return 'hotel';
+      if (cat === 'hospital') return 'activity';
+      if (cat === 'market' || cat === 'plaza') return 'shopping-bag';
+      if (cat === 'airport') return 'plane';
+      return 'map-pin';
+    }
+
+    function setupHeroAutocomplete(inputId, dropdownId, isPickup = false) {
+      const input = document.getElementById(inputId);
+      const dropdown = document.getElementById(dropdownId);
+      if (!input || !dropdown) return;
+
+      let debounceTimer = null;
+
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const query = input.value.trim();
+        if (query.length < 2) {
+          dropdown.style.display = 'none';
+          return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+          const results = await geocodingService.search(query);
+          if (results && results.length > 0) {
+            renderHeroDropdown(results);
+          } else {
+            dropdown.style.display = 'none';
+          }
+        }, 180);
+      });
+
+      function renderHeroDropdown(items) {
+        dropdown.innerHTML = items.map((item, idx) => `
+          <div class="autocomplete-item" data-idx="${idx}">
+            <div class="autocomplete-icon-badge">
+              <i data-lucide="${getCategoryIcon(item.category)}" style="width:16px; height:16px;"></i>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:700; font-size:0.875rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.address}</div>
+            </div>
+          </div>
+        `).join('');
+        dropdown.style.display = 'block';
+        if (window.lucide) window.lucide.createIcons({ root: dropdown });
+
+        dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const idx = parseInt(el.getAttribute('data-idx'));
+            const sel = items[idx];
+            input.value = sel.name;
+            dropdown.style.display = 'none';
+            if (isPickup) {
+              pickupCoord = [sel.lng, sel.lat];
+              heroMap.setPickupPoint(sel.lat, sel.lng);
+            } else {
+              destCoord = [sel.lng, sel.lat];
+              heroMap.setDestinationPoint(sel.lat, sel.lng);
+            }
+            updateHeroRoute();
+            heroMap.fitBounds(pickupCoord, destCoord);
+            showToast('info', isPickup ? 'Kote Ranmase' : 'Destinasyon', sel.name);
+          });
+        });
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = 'none';
+        }
+      });
+    }
+
+    setupHeroAutocomplete('hero-input-pickup', 'hero-pickup-autocomplete', true);
+    setupHeroAutocomplete('hero-input-destination', 'hero-dest-autocomplete', false);
+
+    // Order CTA: forward to rider home with parameters
+    document.getElementById('btn-hero-order')?.addEventListener('click', () => {
+      const pickupVal = document.getElementById('hero-input-pickup')?.value || 'Aéroport Toussaint Louverture';
+      const destVal = document.getElementById('hero-input-destination')?.value || 'Place Saint-Pierre, Pétion-Ville';
+      
+      const tripParams = {
+        pickup: pickupVal,
+        destination: destVal,
+        pickupCoord,
+        destCoord,
+        category: selectedCategory,
+        fare: calculateFare(selectedCategory, currentDistanceKm),
+        distanceKm: currentDistanceKm,
+        durationMin: currentDurationMin
+      };
+
+      try {
+        sessionStorage.setItem('kouri_hero_trip', JSON.stringify(tripParams));
+      } catch(e) {}
+
+      window.location.href = `/pages/rider/home.html?cat=${selectedCategory}&pickup=${encodeURIComponent(pickupVal)}&dest=${encodeURIComponent(destVal)}`;
+    });
+
+    // Simulated Fleet Animation
+    function initSimulatedFleet(kmap) {
+      let fleet = [
+        { id: 'f1', lat: 18.572, lng: -72.294, heading: 140, category_id: 'standard', speedLat: -0.0001, speedLng: 0.0001 },
+        { id: 'f2', lat: 18.550, lng: -72.302, heading: 220, category_id: 'moto', speedLat: 0.00012, speedLng: -0.00015 },
+        { id: 'f3', lat: 18.520, lng: -72.288, heading: 30, category_id: 'comfort', speedLat: 0.0001, speedLng: 0.00008 },
+        { id: 'f4', lat: 18.538, lng: -72.325, heading: 90, category_id: 'van', speedLat: -0.00008, speedLng: 0.00012 }
+      ];
+
+      kmap.updateFleet(fleet);
+
+      setInterval(() => {
+        fleet = fleet.map(d => {
+          let nLat = d.lat + d.speedLat;
+          let nLng = d.lng + d.speedLng;
+          // Boundary bounce in Port-au-Prince bounding box
+          if (nLat > 18.59 || nLat < 18.50) d.speedLat = -d.speedLat;
+          if (nLng > -72.26 || nLng < -72.35) d.speedLng = -d.speedLng;
+          return { ...d, lat: nLat, lng: nLng };
+        });
+        kmap.updateFleet(fleet);
+      }, 3500);
+    }
+  </script>
+
+  <script>
+    // PWA Install Prompt Handler
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('btn-install-app');
+      if (btn) btn.style.display = 'inline-flex';
+    });
+
+    document.getElementById('btn-install-app')?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          showToast('success', 'KOURI Enstale', 'Ou ka jwenn aplikasyon an sou ekran telefòn ou.');
+        }
+        deferredPrompt = null;
+      } else {
+        showToast('info', 'Enstalasyon', 'Pou enstale sou iOS/Safari: tape Pataje epi "Ajoute sou Ekran Akèy".');
+      }
+    });
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('SW register notice:', err);
+      });
+    }
+  </script>
+</body>
+</html>

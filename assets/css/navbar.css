@@ -1,0 +1,185 @@
+/* ======================================================================
+   KOURI — Desktop Glassmorphic Navbar (navbar.css)
+   Pill layout: top 16px, centered, max-width 900px, border-radius 999px,
+   rgba(255,255,255,0.80), blur(20px) saturate(180%), soft border and shadow.
+   ====================================================================== */
+
+.navbar-desktop-wrapper {
+  position: fixed;
+  top: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: var(--z-header);
+  padding: 0 16px;
+  pointer-events: none; /* Allows clicks around the pill */
+}
+
+.navbar-pill {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 900px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 999px;
+  box-shadow: 0 10px 30px -5px rgba(11, 15, 26, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 0 20px;
+  transition: all var(--transition-normal);
+}
+
+.navbar-pill:hover {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 14px 36px -6px rgba(11, 15, 26, 0.12);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.navbar-brand-logo {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+}
+
+.navbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.navbar-link:hover, .navbar-link.active {
+  color: var(--ink);
+  background-color: rgba(11, 15, 26, 0.05);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Language and Currency Switcher in Navbar */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.nav-dropdown-btn:hover {
+  background: var(--surface-alt);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  min-width: 140px;
+  display: none;
+  flex-direction: column;
+  z-index: var(--z-modal);
+}
+
+.nav-dropdown-menu.active {
+  display: flex;
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-dropdown-item:hover, .nav-dropdown-item.active {
+  background: var(--surface-alt);
+  color: var(--accent);
+}
+
+/* User Profile Pill in Navbar */
+.nav-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 6px;
+  border-radius: var(--radius-full);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.nav-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--border);
+}
+
+/* Hide desktop navbar on mobile phones when bottom bar takes over */
+@media (max-width: 768px) {
+  .navbar-desktop-wrapper {
+    top: 8px;
+    padding: 0 8px;
+  }
+  .navbar-pill {
+    height: 52px;
+    padding: 0 12px;
+  }
+  .navbar-links {
+    display: none;
+  }
+}

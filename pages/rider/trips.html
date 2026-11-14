@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Kous Mwen — KOURI</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container">
+      
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <div class="badge badge-primary" style="margin-bottom:8px;">Istorik</div>
+          <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);" data-i18n="nav_trips">Kous Mwen</h1>
+          <p>Tout vwayaj ou te fè ak resi ou ka telechaje.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-outline btn-sm active" data-filter="all">Tout</button>
+          <button type="button" class="btn btn-outline btn-sm" data-filter="completed">Konplete</button>
+          <button type="button" class="btn btn-outline btn-sm" data-filter="cancelled">Anile</button>
+        </div>
+      </div>
+
+      <!-- Trips List -->
+      <div id="trips-container" style="display:flex; flex-direction:column; gap:16px;">
+        
+        <!-- Trip Card 1 -->
+        <div class="card trip-card" data-status="completed">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:40px; height:40px; border-radius:50%; background:var(--surface-alt); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="car" style="width:20px; height:20px; color:var(--ink);"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:1rem;">Kouri Klasik</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">14 Novanm 2026, 14:15 • Mackenzy Pierre</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:1.15rem; color:var(--ink);" data-money-htg="650">650 HTG</div>
+              <span class="badge badge-success">Konplete</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr; gap:8px; margin: 12px 0; padding-left:14px; border-left: 2px solid var(--border);">
+            <div style="font-size:0.875rem;">
+              <span style="font-weight:600; color:var(--ink);">Depa:</span> Aéroport Toussaint Louverture, Mais Gâté
+            </div>
+            <div style="font-size:0.875rem;">
+              <span style="font-weight:600; color:var(--accent);">Rive:</span> Place Saint-Pierre, Pétion-Ville
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              Distans: 8.4 km • Dire: 22 min • Kach
+            </div>
+            <button type="button" class="btn btn-outline btn-sm btn-print-receipt">
+              <i data-lucide="printer"></i> Resi PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Trip Card 2 -->
+        <div class="card trip-card" data-status="completed">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:40px; height:40px; border-radius:50%; background:var(--accent-subtle); display:flex; align-items:center; justify-content:center;">
+                <i data-lucide="bike" style="width:20px; height:20px; color:var(--accent);"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:1rem;">Kouri Moto</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">11 Novanm 2026, 09:30 • Jean-Rico Estimé</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:1.15rem; color:var(--ink);" data-money-htg="250">250 HTG</div>
+              <span class="badge badge-success">Konplete</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr; gap:8px; margin: 12px 0; padding-left:14px; border-left: 2px solid var(--border);">
+            <div style="font-size:0.875rem;">
+              <span style="font-weight:600; color:var(--ink);">Depa:</span> Delmas 48
+            </div>
+            <div style="font-size:0.875rem;">
+              <span style="font-weight:600; color:var(--accent);">Rive:</span> Rue Pan Américaine, Pétion-Ville
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              Distans: 3.2 km • Dire: 10 min • MonCash
+            </div>
+            <button type="button" class="btn btn-outline btn-sm btn-print-receipt">
+              <i data-lucide="printer"></i> Resi PDF
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+
+  <script>
+    document.querySelectorAll('.btn-print-receipt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.print();
+      });
+    });
+  </script>
+</body>
+</html>

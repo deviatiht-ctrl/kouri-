@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Zòn & Pri Fiks Matris">
+  <title>Zòn yo — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; margin-bottom:4px;">Zòn Jeyografik & Matris Pri Fiks</h2>
+            <p style="font-size:0.875rem;">Trase poligon zòn sou kat la, defini zòn ayewopò oswa espesyal, epi fikse tarif zòn-a-zòn.</p>
+          </div>
+          <button type="button" class="btn btn-primary btn-md btn-pill" id="btn-draw-zone">
+            <i data-lucide="edit-3"></i> Trase Nouvo Zòn
+          </button>
+        </div>
+
+        <!-- Zones Map Preview -->
+        <div class="card" style="padding:0; overflow:hidden; margin-bottom:28px;">
+          <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <h3 class="card-title">Vizyalizasyon Poligon Zòn yo</h3>
+            <span class="badge badge-accent">5 Zòn Aktif</span>
+          </div>
+          <div id="zones-map" style="width:100%; height:360px;"></div>
+        </div>
+
+        <!-- Zones List Table -->
+        <div class="data-table-container">
+          <div class="table-toolbar">
+            <h3 class="card-title">Lis Zòn Konfigire yo</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Non Zòn</th>
+                <th>Kòd</th>
+                <th>Tip</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Non Zòn"><strong>Aewopò Mais Gâté</strong></td>
+                <td data-label="Kòd"><code>ZONE_AIRPORT</code></td>
+                <td data-label="Tip"><span class="badge badge-primary">Airport</span></td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm">Edite Poligon</button>
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Non Zòn"><strong>Petyonvil (Pétion-Ville)</strong></td>
+                <td data-label="Kòd"><code>ZONE_PETIONVILLE</code></td>
+                <td data-label="Tip"><span class="badge">Standard</span></td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm">Edite Poligon</button>
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Non Zòn"><strong>Dèlma (Delmas)</strong></td>
+                <td data-label="Kòd"><code>ZONE_DELMAS</code></td>
+                <td data-label="Tip"><span class="badge">Standard</span></td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm">Edite Poligon</button>
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Non Zòn"><strong>Sant Vil (Channmas)</strong></td>
+                <td data-label="Kòd"><code>ZONE_DOWNTOWN</code></td>
+                <td data-label="Tip"><span class="badge badge-accent">Special</span></td>
+                <td data-label="Estati"><span class="badge badge-success">Aktif</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm">Edite Poligon</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Zone-to-Zone Fixed Pricing Matrix -->
+        <div class="data-table-container">
+          <div class="table-toolbar">
+            <h3 class="card-title">Matris Pri Fiks Zòn-a-Zòn</h3>
+            <button type="button" class="btn btn-outline btn-sm" onclick="showToast('info', 'Ajoute Tarif', 'Ajoute nouvo tarif zòn.')">
+              <i data-lucide="plus"></i> Ajoute Pri Zòn
+            </button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Soti nan Zòn</th>
+                <th>Rive nan Zòn</th>
+                <th>Kategori</th>
+                <th>Pri Fiks Garanti</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Soti">Aewopò Mais Gâté</td>
+                <td data-label="Rive">Pétion-Ville</td>
+                <td data-label="Kategori"><span class="badge badge-primary">Klasik</span></td>
+                <td data-label="Pri"><strong data-money-htg="1500">1,500 HTG</strong></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-ghost btn-sm"><i data-lucide="edit-2"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Soti">Aewopò Mais Gâté</td>
+                <td data-label="Rive">Pétion-Ville</td>
+                <td data-label="Kategori"><span class="badge badge-accent">Konfò</span></td>
+                <td data-label="Pri"><strong data-money-htg="2200">2,200 HTG</strong></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-ghost btn-sm"><i data-lucide="edit-2"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Soti">Delmas</td>
+                <td data-label="Rive">Pétion-Ville</td>
+                <td data-label="Kategori"><span class="badge badge-primary">Klasik</span></td>
+                <td data-label="Pri"><strong data-money-htg="650">650 HTG</strong></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-ghost btn-sm"><i data-lucide="edit-2"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+
+  <script>
+    if (window.maplibregl && window.maplibregl.supported()) {
+      const zmap = new window.maplibregl.Map({
+        container: 'zones-map',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [-72.30, 18.54],
+        zoom: 12
+      });
+
+      zmap.on('load', () => {
+        // Add sample polygon zones
+        zmap.addSource('p-ville-zone', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[
+                [-72.310, 18.500],
+                [-72.270, 18.500],
+                [-72.270, 18.530],
+                [-72.310, 18.530],
+                [-72.310, 18.500]
+              ]]
+            }
+          }
+        });
+
+        zmap.addLayer({
+          id: 'p-ville-fill',
+          type: 'fill',
+          source: 'p-ville-zone',
+          paint: {
+            'fill-color': '#2563EB',
+            'fill-opacity': 0.25
+          }
+        });
+
+        zmap.addLayer({
+          id: 'p-ville-outline',
+          type: 'line',
+          source: 'p-ville-zone',
+          paint: {
+            'line-color': '#2563EB',
+            'line-width': 2
+          }
+        });
+      });
+    }
+
+    document.getElementById('btn-draw-zone')?.addEventListener('click', () => {
+      showToast('info', 'Mòd Trase Poligon', 'Klike sou kat la pou kòmanse trase nouvo kontou zòn nan.');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Kat Flòt An Dirèk">
+  <title>Kat an Dirèk — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <!-- Leaflet CDN (100% Free, Zero API Keys, Universal Support) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="stylesheet" href="/assets/css/map.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="overflow:hidden;">
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div style="position:relative; width:100%; height:calc(100dvh - 70px);">
+        <!-- Full Map -->
+        <div id="admin-full-map" style="width:100%; height:100%;"></div>
+
+        <!-- Floating Dispatch / Heatmap Control Toolbar -->
+        <div style="position:absolute; top:20px; left:20px; z-index:10; display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="background:#FFF; padding:6px 14px; border-radius:var(--radius-full); border:1px solid var(--border); box-shadow:var(--shadow-md); display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:700;">
+            <i data-lucide="radio" style="width:16px; height:16px; color:var(--success);"></i>
+            <span>28 Chofè An Liy</span>
+          </div>
+
+          <button type="button" id="btn-toggle-heatmap" class="btn btn-outline btn-sm btn-pill" style="background:#FFF;">
+            <i data-lucide="flame"></i> Aktive Heatmap Demann
+          </button>
+        </div>
+
+        <!-- Driver / Ride Inspect Sidebar Drawer -->
+        <div id="admin-inspect-drawer" class="card" style="position:absolute; bottom:20px; right:20px; width:340px; display:none; z-index:10; box-shadow:var(--shadow-float);">
+          <div class="card-header">
+            <h4 style="font-size:1.05rem;" id="inspect-title">Detay Chofè</h4>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('admin-inspect-drawer').style.display='none'"><i data-lucide="x"></i></button>
+          </div>
+          <div id="inspect-content" style="font-size:0.85rem; margin-bottom:12px;"></div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-primary btn-sm btn-block" onclick="showToast('success', 'Asiyen', 'Kous asiyen manyèlman.')">
+              Re-asiyen Kous
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+
+  <script type="module">
+    import { KouriMap } from '/assets/js/map/map.js';
+
+    const kmap = new KouriMap('admin-full-map', {
+      center: [-72.30, 18.54],
+      zoom: 13.5
+    });
+
+    const sampleFleet = [
+      { id: 'd1', name: 'Mackenzy Pierre', phone: '+509 4811-2233', cat: 'standard', plate: 'AA-12345', lat: 18.5796, lng: -72.2926, heading: 45, status: 'Nan kous' },
+      { id: 'd2', name: 'Jean-Rico Estimé', phone: '+509 3788-9900', cat: 'moto', plate: 'MT-8841', lat: 18.5144, lng: -72.2858, heading: 180, status: 'Disponib' },
+      { id: 'd3', name: 'Ronald Augustin', phone: '+509 3411-2244', cat: 'comfort', plate: 'BB-99214', lat: 18.5552, lng: -72.3125, heading: 270, status: 'Nan kous' },
+      { id: 'd4', name: 'Peterson Noel', phone: '+509 3122-3344', cat: 'standard', plate: 'AA-84721', lat: 18.5432, lng: -72.3389, heading: 90, status: 'Disponib' }
+    ];
+
+    kmap.onReady(() => {
+      sampleFleet.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'marker-vehicle';
+        el.style.transform = `rotate(${d.heading}deg)`;
+        el.innerHTML = `
+          <div class="marker-vehicle-inner" style="background:#0B0F1A; color:#FFF; border-color:#2563EB;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px;"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          </div>
+        `;
+        el.addEventListener('click', () => {
+          const drawer = document.getElementById('admin-inspect-drawer');
+          drawer.style.display = 'block';
+          document.getElementById('inspect-title').textContent = d.name;
+          document.getElementById('inspect-content').innerHTML = `
+            <div><strong>Telefòn:</strong> ${d.phone}</div>
+            <div><strong>Machin / Plak:</strong> ${d.plate} (${d.cat.toUpperCase()})</div>
+            <div><strong>Estati:</strong> <span class="badge ${d.status === 'Disponib' ? 'badge-success' : 'badge-primary'}">${d.status}</span></div>
+            <div><strong>Pozisyon:</strong> ${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}</div>
+          `;
+        });
+        const icon = window.L.divIcon({ html: el, className: '', iconSize: [40, 40], iconAnchor: [20, 20] });
+        window.L.marker([d.lat, d.lng], { icon }).addTo(kmap.map);
+      });
+    });
+
+    let heatmapActive = false;
+    document.getElementById('btn-toggle-heatmap')?.addEventListener('click', () => {
+      heatmapActive = !heatmapActive;
+      showToast('info', 'Heatmap Demann', heatmapActive ? 'Kouch konsantrasyon kous aktive.' : 'Kouch konsantrasyon kous etenn.');
+    });
+  </script>
+</body>
+</html>

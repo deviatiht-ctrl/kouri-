@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Revni Mwen — KOURI Chofè</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <!-- Chart.js CDN for Driver/Admin Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+  <link rel="stylesheet" href="/assets/css/mobile-nav.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background:#FFFFFF; min-height:100dvh;">
+
+  <div id="kouri-navbar"></div>
+
+  <main style="padding-top: clamp(90px, 12vw, 130px); padding-bottom: 90px;">
+    <div class="container">
+      
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <div class="badge badge-success" style="margin-bottom:8px;">Finans Chofè</div>
+          <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Revni ak Pèman</h1>
+          <p>Swiv tout lajan ou antre, komisyon platfòm nan, ak demann retrè ou.</p>
+        </div>
+        <button type="button" id="btn-request-payout" class="btn btn-primary btn-md btn-pill">
+          <i data-lucide="arrow-up-right"></i> Mande yon Payout (Retrè)
+        </button>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:28px;">
+        <div class="card">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Jodi a</div>
+          <div style="font-size:1.8rem; font-weight:800; font-family:var(--font-heading); color:var(--ink);" data-money-htg="2450">2,450 HTG</div>
+          <div style="font-size:0.775rem; color:var(--success); font-weight:600; margin-top:4px;">5 kous konplete</div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Semèn Sa A</div>
+          <div style="font-size:1.8rem; font-weight:800; font-family:var(--font-heading); color:var(--ink);" data-money-htg="18600">18,600 HTG</div>
+          <div style="font-size:0.775rem; color:var(--text-muted); margin-top:4px;">32 kous konplete</div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Balans Nèt Retrè</div>
+          <div style="font-size:1.8rem; font-weight:800; font-family:var(--font-heading); color:var(--success);" data-money-htg="12400">12,400 HTG</div>
+          <div style="font-size:0.775rem; color:var(--text-muted); margin-top:4px;">Disponib pou transfè</div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Komisyon Platfòm</div>
+          <div style="font-size:1.8rem; font-weight:800; font-family:var(--font-heading); color:var(--ink);">15%</div>
+          <div style="font-size:0.775rem; color:var(--text-muted); margin-top:4px;">Ou kenbe 85% tout kous</div>
+        </div>
+      </div>
+
+      <!-- Chart.js Graph -->
+      <div class="card" style="margin-bottom:28px;">
+        <div class="card-header">
+          <h3 style="font-size:1.2rem;">Grafik Revni Dènye 7 Jou yo</h3>
+          <span class="badge badge-primary">Semèn An Kour</span>
+        </div>
+        <div style="height:280px; position:relative;">
+          <canvas id="earningsChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Payout Request Modal / Collapsible -->
+      <div id="payout-box" class="card" style="display:none; margin-bottom:28px; border:2px solid var(--accent);">
+        <div class="card-header">
+          <h3 style="font-size:1.2rem;">Mande Transfè Revni Ou</h3>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-close-payout"><i data-lucide="x"></i></button>
+        </div>
+        <p style="font-size:0.85rem; margin-bottom:16px;">Transfè yo fèt dirèkteman sou nimewo MonCash oswa NatCash ou nan mwens pase 24 èdtan.</p>
+        
+        <form id="payout-form">
+          <div class="form-group">
+            <label class="form-label">Chwazi Mwayen Retrè</label>
+            <select class="form-select" id="payout-method">
+              <option value="moncash">MonCash (+509 4811-2233)</option>
+              <option value="natcash">NatCash (+509 4811-2233)</option>
+              <option value="bank">Kont labank (Sogebank / Unibank)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Montan pou Retrè (Max 12,400 HTG)</label>
+            <input type="number" class="form-input" id="payout-amount" placeholder="Eg: 5000" min="500" max="12400" required>
+          </div>
+
+          <button type="submit" id="btn-submit-payout" class="btn btn-primary btn-block btn-lg">
+            <i data-lucide="send"></i> Voye Demann Retrè a
+          </button>
+        </form>
+      </div>
+
+      <!-- Recent Trips Breakdown -->
+      <div>
+        <h3 style="font-size:1.25rem; margin-bottom:16px;">Detay Dènye Kous yo</h3>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="card" style="padding:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Aéroport Mais Gâté → Pétion-Ville</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">14 Nov 2026, 14:15 • 8.4 km • Jean-Baptiste D.</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:1.15rem; color:var(--success);" data-money-htg="552.5">552.50 HTG</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Total kous: 650 HTG (Komisyon: 97.50 HTG)</div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Delmas 33 → Tabarre 27</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">14 Nov 2026, 11:20 • 4.1 km • Marie C.</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:1.15rem; color:var(--success);" data-money-htg="425">425.00 HTG</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Total kous: 500 HTG (Komisyon: 75.00 HTG)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="kouri-mobile-nav"></div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/navbar.js"></script>
+
+  <script>
+    // Initialize Chart.js
+    const ctx = document.getElementById('earningsChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Lendi', 'Madi', 'Mèkredi', 'Jedi', 'Vandredi', 'Samdi', 'Dimanch'],
+        datasets: [{
+          label: 'Revni (HTG)',
+          data: [1800, 2600, 3100, 2900, 3800, 4200, 2450],
+          backgroundColor: '#0B0F1A',
+          borderRadius: 8,
+          hoverBackgroundColor: '#2563EB'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#F1F5F9' }
+          },
+          x: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    const payoutBox = document.getElementById('payout-box');
+    document.getElementById('btn-request-payout')?.addEventListener('click', () => {
+      payoutBox.style.display = 'block';
+      payoutBox.scrollIntoView({ behavior: 'smooth' });
+    });
+    document.getElementById('btn-close-payout')?.addEventListener('click', () => {
+      payoutBox.style.display = 'none';
+    });
+
+    document.getElementById('payout-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const amount = document.getElementById('payout-amount').value;
+      const btn = document.getElementById('btn-submit-payout');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="skeleton-text" style="width:80px; height:18px;"></span>`;
+
+      setTimeout(() => {
+        showToast('success', 'Demann Retrè Enskri', `Nou resevwa demann retrè ${amount} HTG ou an. Transfè a ap fèt jodi a menm.`);
+        payoutBox.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send"></i> Voye Demann Retrè a`;
+        if (window.lucide) window.lucide.createIcons();
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Jesyon Kous yo">
+  <title>Kous yo — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; margin-bottom:4px;">Tout Kous Platfòm nan</h2>
+            <p style="font-size:0.875rem;">Filtre, verifye anomalie offline, oswa re-jouwe wout GPS.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-outline btn-sm active">Tout</button>
+            <button type="button" class="btn btn-outline btn-sm">An Kou</button>
+            <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);"><i data-lucide="alert-triangle"></i> Siyale Anomali (Offline)</button>
+          </div>
+        </div>
+
+        <!-- Table with Anomaly Flags & Status Override -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID Kous</th>
+                <th>Dat & Lè</th>
+                <th>Pasaje</th>
+                <th>Chofè</th>
+                <th>Kategori</th>
+                <th>Montan</th>
+                <th>Offline Sync</th>
+                <th>Estati</th>
+                <th>Aksyon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="ID"><strong>#KR-9142</strong></td>
+                <td data-label="Dat">14 Nov, 14:15</td>
+                <td data-label="Pasaje">Jean-Baptiste Delva</td>
+                <td data-label="Chofè">Mackenzy Pierre</td>
+                <td data-label="Kategori"><span class="badge badge-primary">Klasik</span></td>
+                <td data-label="Montan"><strong data-money-htg="650">650 HTG</strong></td>
+                <td data-label="Offline Sync">
+                  <span class="badge badge-success"><i data-lucide="check"></i> Wi (Konfòm)</span>
+                </td>
+                <td data-label="Estati"><span class="badge badge-success">Konplete</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="showToast('info', 'Replay Wout', 'Replay GPS aktif sou kat la.')">
+                    <i data-lucide="play-circle"></i> Replay
+                  </button>
+                </td>
+              </tr>
+
+              <tr style="background:#FFFBEB;">
+                <td data-label="ID"><strong>#KR-9139</strong></td>
+                <td data-label="Dat">14 Nov, 12:40</td>
+                <td data-label="Pasaje">Fabrice Benoit</td>
+                <td data-label="Chofè">Ronald Augustin</td>
+                <td data-label="Kategori"><span class="badge badge-accent">Konfò</span></td>
+                <td data-label="Montan"><strong data-money-htg="1800">1,800 HTG</strong></td>
+                <td data-label="Offline Sync">
+                  <span class="badge badge-warning"><i data-lucide="alert-triangle"></i> Diferans Tarif +30%</span>
+                </td>
+                <td data-label="Estati"><span class="badge badge-warning">Bezwen Revizyon</span></td>
+                <td data-label="Aksyon">
+                  <div style="display:flex; gap:4px;">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="showToast('success', 'Apwouve', 'Tarif ajiste e apwouve.')">Apwouve</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="showToast('warning', 'Bloke', 'Peman an rete pou kontwòl.')">Bloke</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td data-label="ID"><strong>#KR-9135</strong></td>
+                <td data-label="Dat">14 Nov, 10:15</td>
+                <td data-label="Pasaje">Carline Saint-Vil</td>
+                <td data-label="Chofè">Jean-Rico Estimé</td>
+                <td data-label="Kategori"><span class="badge">Moto</span></td>
+                <td data-label="Montan"><strong data-money-htg="250">250 HTG</strong></td>
+                <td data-label="Offline Sync"><span class="badge">Non (Live)</span></td>
+                <td data-label="Estati"><span class="badge badge-success">Konplete</span></td>
+                <td data-label="Aksyon">
+                  <button type="button" class="btn btn-outline btn-sm"><i data-lucide="eye"></i> Wè</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="admin-page-title" content="Alèt SOS & Sipò Kliyan">
+  <title>SOS & Tikè — KOURI Admin</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/icon-placeholder.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <main class="admin-main">
+      <header class="admin-header" id="admin-header"></header>
+
+      <div class="admin-body">
+        
+        <!-- Emergency SOS Alerts Section -->
+        <div style="margin-bottom:32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div>
+              <div class="badge badge-danger" style="margin-bottom:6px;">Ijans Maksimòm</div>
+              <h2 style="font-size:1.5rem; margin-bottom:4px;">Alèt SOS Deklanche an Tan Reyèl</h2>
+            </div>
+            <span class="badge badge-success"><i data-lucide="check"></i> Pa gen alèt aktif kounye a</span>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Lè Deklanchman</th>
+                  <th>Itilizatè</th>
+                  <th>Wòl</th>
+                  <th>Kowòdone GPS</th>
+                  <th>Kous Konsène</th>
+                  <th>Estati</th>
+                  <th>Aksyon</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="Lè">12 Nov, 21:14</td>
+                  <td data-label="Itilizatè"><strong>Peterson Noel</strong></td>
+                  <td data-label="Wòl"><span class="badge">Chofè</span></td>
+                  <td data-label="GPS">18.5432, -72.3389 (Champs de Mars)</td>
+                  <td data-label="Kous">#KR-8910</td>
+                  <td data-label="Estati"><span class="badge badge-success">Rezoud</span></td>
+                  <td data-label="Aksyon">
+                    <button type="button" class="btn btn-outline btn-sm">Rapò Ijans</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Customer Support Tickets Section -->
+        <div>
+          <h2 style="font-size:1.4rem; margin-bottom:16px;">Tikè Sipò Kliyan</h2>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID Tikè</th>
+                  <th>Itilizatè</th>
+                  <th>Sijè</th>
+                  <th>Priyorite</th>
+                  <th>Dat</th>
+                  <th>Estati</th>
+                  <th>Aksyon</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="ID"><code>#TCK-201</code></td>
+                  <td data-label="Itilizatè">Jean-Baptiste Delva</td>
+                  <td data-label="Sijè">Objè bliye nan machin nan (Linèt solèy)</td>
+                  <td data-label="Priyorite"><span class="badge badge-warning">Mwayen</span></td>
+                  <td data-label="Dat">14 Nov, 15:00</td>
+                  <td data-label="Estati"><span class="badge badge-accent">Ouvri</span></td>
+                  <td data-label="Aksyon">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="showToast('info', 'Tikè', 'Detay tikè louvri pou reponn.')">
+                      Reponn Kliyan
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/supabase.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/components/toast.js"></script>
+  <script src="/assets/js/components/logo.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin/admin-nav.js"></script>
+</body>
+</html>
